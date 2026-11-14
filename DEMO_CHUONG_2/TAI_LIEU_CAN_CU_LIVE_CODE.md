@@ -157,7 +157,7 @@
 <body>
 
     <!-- ================= 1. THẺ TIÊU ĐỀ & ĐỊNH DẠNG VĂN BẢN ================= -->
-    <section>
+    <div>
         <!-- 1. Cấp độ tiêu đề h1 -> h6 -->
         <h1>Tiêu đề H1 (Lớn nhất)</h1>
         <h2>Tiêu đề H2 (Nhỏ hơn)</h2>
@@ -173,12 +173,12 @@
             <br>
             Dòng này đã được ngắt xuống hàng bằng thẻ br.
         </p>
-    </section>
+    </div>
 
     <hr>
 
     <!-- ================= 2. NHÓM THẺ DANH SÁCH (LISTS) ================= -->
-    <section>
+    <div>
         <!-- 1. Danh sách không thứ tự (ul) -->
         <h4>Kỹ Năng Cần Học:</h4>
         <ul>
@@ -194,12 +194,12 @@
             <li>Trang trí bằng CSS</li>
             <li>Xử lý backend PHP & MySQL</li>
         </ol>
-    </section>
+    </div>
 
     <hr>
 
     <!-- ================= 3. THẺ LIÊN KẾT & ĐA PHƯƠNG TIỆN ================= -->
-    <section>
+    <div>
         <!-- 1. Thẻ siêu liên kết (Link) -->
         <a href="https://dthu.edu.vn" target="_blank">
             Cổng thông tin ĐH Đồng Tháp →
@@ -214,12 +214,12 @@
         <audio controls>
             <source src="podcast.mp3" type="audio/mpeg">
         </audio>
-    </section>
+    </div>
 
     <hr>
 
     <!-- ================= 4. NHÓM THẺ BẢNG BIỂU (TABLES) ================= -->
-    <section>
+    <div>
         <!-- Bảng thời khóa biểu (rowspan & colspan) -->
         <table border="1">
             <tr>
@@ -242,12 +242,12 @@
                 <td colspan="3" align="center">Ghi chú: Lớp học cả ngày</td>
             </tr>
         </table>
-    </section>
+    </div>
 
     <hr>
 
     <!-- ================= 5. NHÓM THẺ BIỂU MẪU (FORMS) ================= -->
-    <section>
+    <div>
         <!-- form gửi dữ liệu sang file xuly.php qua POST -->
         <form action="xuly.php" method="POST">
 
@@ -266,7 +266,7 @@
 
             <button type="submit">Đăng Nhập</button>
         </form>
-    </section>
+    </div>
 
 </body>
 </html>
