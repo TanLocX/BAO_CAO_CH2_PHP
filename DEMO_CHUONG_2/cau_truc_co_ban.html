@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<!-- 1. KHAI BÁO TÀI LIỆU HTML5: Giúp trình duyệt nhận diện đây là chuẩn HTML5 -->
+<html lang="vi">
+<!-- Thẻ gốc <html> bao bọc toàn bộ trang web, thuộc tính lang="vi" khai báo ngôn ngữ Tiếng Việt -->
+
+<head>
+    <!-- Phần <head> chứa thông tin cấu hình (metadata) không hiển thị trực tiếp trên nội dung trang -->
+    <meta charset="UTF-8">
+    <!-- Bảng mã UTF-8 giúp hiển thị đầy đủ tiếng Việt có dấu và ký tự đặc biệt -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Hỗ trợ hiển thị tương thích trên nhiều kích thước màn hình (Responsive) -->
+    <meta name="description" content="Trang demo HTML5 thuần cho Chương 2 - Học phần Lập Trình Web PHP (IN4502N)">
+    <title>Demo HTML5 Thuần - Cổng Thông Tin Sinh Viên (IN4502N)</title>
+</head>
+
+<body>
+    <!-- Phần <body> chứa toàn bộ nội dung hiển thị cho người dùng trên trình duyệt -->
+
+    <!-- ===================================================================== -->
+    <!-- 2. THẺ BỐ CỤC NGỮ NGHĨA (SEMANTIC HTML5): <header> và <nav>           -->
+    <!-- ===================================================================== -->
+    <header id="dau-trang">
+        <!-- <header>: Phần đầu trang hoặc đầu một khu vực nội dung -->
+        <h1>CỔNG THÔNG TIN SINH VIÊN &amp; ĐĂNG KÝ HỌC PHẦN</h1>
+        <p>
+            <strong>Học phần:</strong> <em>Lập Trình Web PHP (IN4502N)</em> &mdash;
+            <mark>Demo HTML5 Thuần (Không CSS / Không JavaScript)</mark>
+        </p>
+
+        <!-- <nav>: Khu vực chứa các liên kết điều hướng chính của trang -->
+        <nav aria-label="Điều hướng chính">
+            <ul>
+                <li><a href="#van-ban">1. Tiêu đề &amp; Văn bản</a></li>
+                <li><a href="#lien-ket-hinh-anh">2. Liên kết &amp; Hình ảnh</a></li>
+                <li><a href="#danh-sach">3. Danh sách</a></li>
+                <li><a href="#bang-bieu">4. Bảng biểu (Thời khóa biểu)</a></li>
+                <li><a href="#bieu-mau">5. Biểu mẫu (Form đăng ký)</a></li>
+                <li><a href="#bo-tro-html5">6. Thẻ HTML5 bổ trợ</a></li>
+                <li><a href="index.html">Quay lại Trang Showcase Báo Cáo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <hr>
+    <!-- <hr>: Thẻ đơn tạo đường kẻ ngang phân tách các khu vực nội dung -->
+
+    <!-- <main>: Nội dung chính và duy nhất của trang web -->
+    <main>
+
+        <!-- ================================================================= -->
+        <!-- 3. NHÓM THẺ TIÊU ĐỀ VÀ ĐỊNH DẠNG VĂN BẢN                          -->
+        <!-- ================================================================= -->
+        <section id="van-ban">
+            <h2>1. Nhóm thẻ Tiêu đề &amp; Định dạng văn bản</h2>
+
+            <!-- Phân cấp 6 mức tiêu đề từ <h1> (quan trọng nhất) đến <h6> -->
+            <h1>Tiêu đề cấp 1 (&lt;h1&gt;) - Tiêu đề lớn nhất</h1>
+            <h2>Tiêu đề cấp 2 (&lt;h2&gt;) - Tiêu đề mục lớn</h2>
+            <h3>Tiêu đề cấp 3 (&lt;h3&gt;) - Tiêu đề mục con</h3>
+            <h4>Tiêu đề cấp 4 (&lt;h4&gt;) - Tiểu mục</h4>
+            <h5>Tiêu đề cấp 5 (&lt;h5&gt;) - Ghi chú mục nhỏ</h5>
+            <h6>Tiêu đề cấp 6 (&lt;h6&gt;) - Tiêu đề cấp nhỏ nhất</h6>
+
+            <!-- <article>: Một khối nội dung độc lập (bài viết, thông báo) -->
+            <article>
+                <h3>Thông báo học vụ về Chương 2: HTML</h3>
+                <!-- <p>: Thẻ đoạn văn bản -->
+                <p>
+                    HTML (<em>HyperText Markup Language</em>) là ngôn ngữ đánh dấu dùng để xây dựng
+                    <strong>cấu trúc và ngữ nghĩa</strong> cho trang web. Sinh viên cần nắm vững cách dùng thẻ
+                    <mark>HTML5 chuẩn ngữ nghĩa</mark> trước khi học sang <u>CSS</u> và <u>PHP</u>.
+                </p>
+
+                <p>
+                    Học phí ưu đãi trước đây là <del>1.500.000đ</del> nay được hỗ trợ tài liệu học tập miễn phí.
+                    <br>
+                    <!-- <br>: Thẻ đơn dùng để xuống dòng trong cùng một đoạn văn -->
+                    Ví dụ chỉ số dưới (&lt;sub&gt;): Công thức nước là H<sub>2</sub>O.<br>
+                    Ví dụ chỉ số trên (&lt;sup&gt;): Phương trình bậc hai ax<sup>2</sup> + bx + c = 0.
+                </p>
+
+                <!-- <blockquote>: Trích dẫn một đoạn văn dài từ nguồn khác -->
+                <blockquote cite="https://developer.mozilla.org">
+                    "HTML là nền tảng của mọi trang web: trình duyệt đọc mã HTML để hiểu đâu là tiêu đề,
+                    đâu là đoạn văn, bảng dữ liệu hay biểu mẫu nhập liệu."
+                </blockquote>
+
+                <p>
+                    Đoạn mã HTML viết trên một dòng: <code>&lt;p&gt;Xin chào PHP!&lt;/p&gt;</code>
+                </p>
+
+                <!-- <pre>: Giữ nguyên khoảng trắng và ngắt dòng như trong mã nguồn -->
+                <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="vi"&gt;
+    &lt;head&gt;&lt;title&gt;Ví dụ thẻ pre&lt;/title&gt;&lt;/head&gt;
+    &lt;body&gt;&lt;p&gt;Giữ nguyên định dạng thụt lề!&lt;/p&gt;&lt;/body&gt;
+&lt;/html&gt;
+                </pre>
+            </article>
+        </section>
+
+        <hr>
+
+        <!-- ================================================================= -->
+        <!-- 4. NHÓM THẺ LIÊN KẾT VÀ HÌNH ẢNH                                  -->
+        <!-- ================================================================= -->
+        <section id="lien-ket-hinh-anh">
+            <h2>2. Nhóm thẻ Liên kết (&lt;a&gt;) &amp; Hình ảnh (&lt;img&gt;, &lt;figure&gt;)</h2>
+
+            <p>Các dạng liên kết phổ biến với thẻ <code>&lt;a&gt;</code>:</p>
+            <ul>
+                <li>
+                    Liên kết ngoài (mở tab mới):
+                    <a href="https://developer.mozilla.org/vi/docs/Web/HTML" target="_blank" rel="noopener noreferrer">
+                        Tài liệu HTML trên MDN Web Docs
+                    </a>
+                </li>
+                <li>
+                    Liên kết nội bộ (nhảy đến mục trong cùng trang):
+                    <a href="#bieu-mau">Đi tới Biểu mẫu Đăng ký Học phần</a>
+                </li>
+                <li>
+                    Liên kết gửi Email (mailto):
+                    <a href="mailto:sinhvien@dthu.edu.vn">Gửi email tới Văn phòng Khoa</a>
+                </li>
+            </ul>
+
+            <!-- <figure> và <figcaption>: Bao bọc hình ảnh minh họa kèm chú thích ngữ nghĩa -->
+            <figure>
+                <!-- <img>: Thẻ đơn chèn ảnh, bắt buộc có src (nguồn ảnh) và alt (văn bản thay thế) -->
+                <!-- Dùng SVG Data URI nội bộ để ảnh luôn hiển thị rõ nét ngay cả khi không có Internet -->
+                <img
+                    src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='160' viewBox='0 0 480 160'%3E%3Crect width='480' height='160' rx='12' fill='%231e3a8a'/%3E%3Crect x='16' y='16' width='448' height='128' rx='8' fill='%23eff6ff'/%3E%3Ctext x='240' y='68' font-family='Arial, sans-serif' font-size='22' font-weight='bold' fill='%231e3a8a' text-anchor='middle'%3EHTML5 - IN4502N%3C/text%3E%3Ctext x='240' y='100' font-family='Arial, sans-serif' font-size='15' fill='%23334155' text-anchor='middle'%3EMinh h%E1%BB%8Da th%E1%BA%BB &lt;img&gt;, &lt;figure&gt; v%C3%A0 &lt;figcaption&gt;%3C/text%3E%3C/svg%3E"
+                    alt="Minh họa cấu trúc HTML5 học phần IN4502N"
+                    width="480"
+                    height="160">
+                <figcaption>Hình 2.1: Ảnh minh họa nhúng bằng thẻ &lt;img&gt; nằm trong thẻ &lt;figure&gt;.</figcaption>
+            </figure>
+        </section>
+
+        <hr>
+
+        <!-- ================================================================= -->
+        <!-- 5. NHÓM THẺ DANH SÁCH (<ul>, <ol>, <dl>)                          -->
+        <!-- ================================================================= -->
+        <section id="danh-sach">
+            <h2>3. Nhóm thẻ Danh sách (&lt;ul&gt;, &lt;ol&gt;, &lt;dl&gt;)</h2>
+
+            <h3>a. Danh sách không thứ tự (&lt;ul&gt;) &amp; Danh sách lồng nhau</h3>
+            <ul>
+                <li>Chương 1: Tổng quan về Web</li>
+                <li>Chương 2: Ngôn ngữ HTML
+                    <!-- Danh sách lồng nhau đặt bên trong thẻ <li> -->
+                    <ul>
+                        <li>2.1. Giới thiệu HTML</li>
+                        <li>2.2. Cấu trúc tài liệu HTML</li>
+                        <li>2.3. Giới thiệu thẻ HTML</li>
+                        <li>2.4. Các thẻ HTML thông dụng</li>
+                    </ul>
+                </li>
+                <li>Chương 3: Định kiểu với CSS</li>
+            </ul>
+
+            <h3>b. Danh sách có thứ tự (&lt;ol&gt;)</h3>
+            <ol type="1">
+                <li>Khởi tạo tài liệu với khai báo <code>&lt;!DOCTYPE html&gt;</code>.</li>
+                <li>Thiết lập phần <code>&lt;head&gt;</code> với UTF-8 và tiêu đề trang.</li>
+                <li>Xây dựng bố cục ngữ nghĩa trong <code>&lt;body&gt;</code>.</li>
+                <li>Kiểm tra hợp lệ mã HTML trên trình duyệt.</li>
+            </ol>
+
+            <h3>c. Danh sách mô tả thuật ngữ (&lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;)</h3>
+            <dl>
+                <dt><strong>HTML</strong></dt>
+                <dd>Ngôn ngữ đánh dấu siêu văn bản dùng để định nghĩa cấu trúc trang web.</dd>
+
+                <dt><strong>Semantic Tag</strong></dt>
+                <dd>Thẻ mang ý nghĩa mô tả vai trò nội dung như <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code>.</dd>
+
+                <dt><strong>Void Element</strong></dt>
+                <dd>Thẻ đơn không có thẻ đóng và không chứa nội dung bên trong như <code>&lt;br&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;img&gt;</code>.</dd>
+            </dl>
+        </section>
+
+        <hr>
+
+        <!-- ================================================================= -->
+        <!-- 6. NHÓM THẺ BẢNG (<table>, colspan, rowspan)                      -->
+        <!-- ================================================================= -->
+        <section id="bang-bieu">
+            <h2>4. Nhóm thẻ Bảng (&lt;table&gt;, &lt;thead&gt;, &lt;tbody&gt;, &lt;tfoot&gt;)</h2>
+
+            <!-- border, cellpadding, cellspacing dùng minh họa rõ đường viền khi không dùng CSS -->
+            <table border="1" cellpadding="8" cellspacing="0">
+                <!-- <caption>: Tiêu đề mô tả ý nghĩa của bảng -->
+                <caption><strong>Bảng 2.1: Thời khóa biểu &amp; Tiến độ Học phần Lập Trình Web PHP</strong></caption>
+
+                <!-- <thead>: Nhóm các hàng tiêu đề của bảng -->
+                <thead>
+                    <tr>
+                        <th rowspan="2">Buổi học</th>
+                        <th colspan="3">Thông tin chi tiết học phần</th>
+                    </tr>
+                    <tr>
+                        <th>Chủ đề / Chương</th>
+                        <th>Hình thức</th>
+                        <th>Số tiết</th>
+                    </tr>
+                </thead>
+
+                <!-- <tbody>: Phần dữ liệu chính của bảng -->
+                <tbody>
+                    <tr>
+                        <td rowspan="2">Tuần 1 - 2</td>
+                        <td>Chương 1: Khái niệm cơ bản về Web</td>
+                        <td>Lý thuyết</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Chương 2: HTML &amp; Thẻ thông dụng</td>
+                        <td>Lý thuyết + Thực hành</td>
+                        <td>6</td>
+                    </tr>
+                    <tr>
+                        <td>Tuần 3</td>
+                        <td>Chương 3: Ngôn ngữ định kiểu CSS</td>
+                        <td>Lý thuyết + Thực hành</td>
+                        <td>4</td>
+                    </tr>
+                    <tr>
+                        <td>Tuần 4 - 5</td>
+                        <td>Chương 4: JavaScript &amp; jQuery</td>
+                        <td>Lý thuyết + Thực hành</td>
+                        <td>6</td>
+                    </tr>
+                </tbody>
+
+                <!-- <tfoot>: Phần tổng kết cuối bảng -->
+                <tfoot>
+                    <tr>
+                        <td colspan="3"><strong>Tổng số tiết minh họa</strong></td>
+                        <td><strong>17 tiết</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+
+        <hr>
+
+        <!-- ================================================================= -->
+        <!-- 7. NHÓM THẺ BIỂU MẪU (<form>)                                     -->
+        <!-- ================================================================= -->
+        <section id="bieu-mau">
+            <h2>5. Nhóm thẻ Biểu mẫu (&lt;form&gt;, &lt;fieldset&gt;, &lt;input&gt;, &lt;select&gt;, &lt;textarea&gt;)</h2>
+
+            <!-- <form>: Khu vực thu thập dữ liệu người dùng gửi về Server (PHP ở Chương 5) -->
+            <form action="#" method="post">
+
+                <!-- <fieldset> & <legend>: Nhóm các trường nhập liệu liên quan có tiêu đề khung -->
+                <fieldset>
+                    <legend>Thông tin cá nhân sinh viên</legend>
+
+                    <p>
+                        <label for="ho-ten">Họ và tên (text):</label><br>
+                        <input type="text" id="ho-ten" name="ho_ten" placeholder="Ví dụ: Nguyễn Văn An" required>
+                    </p>
+
+                    <p>
+                        <label for="mat-khau">Mật khẩu cổng SV (password):</label><br>
+                        <input type="password" id="mat-khau" name="mat_khau" minlength="6" placeholder="Tối thiểu 6 ký tự" required>
+                    </p>
+
+                    <p>
+                        <label for="email-sv">Email sinh viên (email):</label><br>
+                        <input type="email" id="email-sv" name="email" placeholder="sinhvien@dthu.edu.vn" required>
+                    </p>
+
+                    <p>
+                        <label for="sdt">Số điện thoại (tel):</label><br>
+                        <input type="tel" id="sdt" name="sdt" placeholder="0912345678">
+                    </p>
+
+                    <p>
+                        <label for="ngay-sinh">Ngày sinh (date):</label><br>
+                        <input type="date" id="ngay-sinh" name="ngay_sinh" value="2005-01-15">
+                    </p>
+
+                    <p>
+                        <label for="so-tin-chi">Số tín chỉ đăng ký (number):</label><br>
+                        <input type="number" id="so-tin-chi" name="so_tin_chi" min="1" max="25" value="3">
+                    </p>
+                </fieldset>
+
+                <br>
+
+                <fieldset>
+                    <legend>Thông tin đăng ký học phần &amp; Tùy chọn HTML5</legend>
+
+                    <!-- Radio button: Chỉ chọn 1 phương án trong cùng thuộc tính name -->
+                    <p>
+                        Giới tính (radio):<br>
+                        <input type="radio" id="nam" name="gioi_tinh" value="Nam" checked>
+                        <label for="nam">Nam</label>
+                        <input type="radio" id="nu" name="gioi_tinh" value="Nữ">
+                        <label for="nu">Nữ</label>
+                        <input type="radio" id="khac" name="gioi_tinh" value="Khác">
+                        <label for="khac">Khác</label>
+                    </p>
+
+                    <!-- Checkbox: Cho phép chọn nhiều phương án cùng lúc -->
+                    <p>
+                        Kỹ năng đã biết (checkbox):<br>
+                        <input type="checkbox" id="kn-html" name="ky_nang[]" value="HTML" checked>
+                        <label for="kn-html">HTML5</label>
+                        <input type="checkbox" id="kn-css" name="ky_nang[]" value="CSS">
+                        <label for="kn-css">CSS3</label>
+                        <input type="checkbox" id="kn-js" name="ky_nang[]" value="JS">
+                        <label for="kn-js">JavaScript</label>
+                        <input type="checkbox" id="kn-php" name="ky_nang[]" value="PHP">
+                        <label for="kn-php">PHP &amp; MySQL</label>
+                    </p>
+
+                    <!-- <select> kết hợp <optgroup> và <option> -->
+                    <p>
+                        <label for="mon-hoc">Chọn lớp học phần (select + optgroup):</label><br>
+                        <select id="mon-hoc" name="mon_hoc">
+                            <optgroup label="Nhóm môn Web">
+                                <option value="IN4502N" selected>IN4502N - Lập Trình Web PHP</option>
+                                <option value="IN4147">IN4147 - Thiết kế và tích hợp giao diện</option>
+                            </optgroup>
+                            <optgroup label="Nhóm môn Cơ sở dữ liệu">
+                                <option value="IN4505">IN4505 - Hệ quản trị CSDL MySQL &amp; PostgreSQL</option>
+                            </optgroup>
+                        </select>
+                    </p>
+
+                    <p>
+                        <label for="anh-the">Tải lên ảnh thẻ sinh viên (file):</label><br>
+                        <input type="file" id="anh-the" name="anh_the" accept="image/*">
+                    </p>
+
+                    <p>
+                        <label for="mau-nhom">Chọn màu đại diện nhóm (color):</label><br>
+                        <input type="color" id="mau-nhom" name="mau_nhom" value="#2563eb">
+                    </p>
+
+                    <p>
+                        <label for="muc-tu-tin">Mức độ tự tin với HTML từ 0 đến 10 (range):</label><br>
+                        <input type="range" id="muc-tu-tin" name="muc_tu_tin" min="0" max="10" value="8">
+                    </p>
+
+                    <!-- <textarea>: Ô nhập văn bản nhiều dòng -->
+                    <p>
+                        <label for="ghi-chu">Ghi chú thêm cho giảng viên (textarea):</label><br>
+                        <textarea id="ghi-chu" name="ghi_chu" rows="4" cols="50" placeholder="Nhập mục tiêu học tập của bạn..."></textarea>
+                    </p>
+                </fieldset>
+
+                <br>
+
+                <!-- Nút gửi và nút làm mới biểu mẫu -->
+                <button type="submit">Gửi Đăng Ký (Submit)</button>
+                <button type="reset">Nhập Lại (Reset)</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- ================================================================= -->
+        <!-- 8. NHÓM THẺ HTML5 BỔ TRỢ (<details>, <summary>, <progress>, <meter>) -->
+        <!-- ================================================================= -->
+        <section id="bo-tro-html5">
+            <h2>6. Nhóm thẻ HTML5 bổ trợ (&lt;details&gt;, &lt;progress&gt;, &lt;meter&gt;)</h2>
+
+            <!-- <details> & <summary>: Tạo hộp đóng/mở nội dung không cần JavaScript -->
+            <details open>
+                <summary><strong>Câu hỏi thường gặp: Tại sao nên dùng thẻ ngữ nghĩa HTML5?</strong></summary>
+                <p>
+                    Thẻ ngữ nghĩa giúp lập trình viên dễ đọc mã nguồn, hỗ trợ công cụ tìm kiếm (SEO) hiểu đúng
+                    cấu trúc trang và giúp trình đọc màn hình (Accessibility) hỗ trợ người dùng khiếm thị.
+                </p>
+            </details>
+
+            <p>
+                <!-- <progress>: Biểu diễn tiến độ hoàn thành một công việc -->
+                <label for="tien-do">Tiến độ hoàn thành Chương 2 (&lt;progress&gt;):</label>
+                <progress id="tien-do" value="85" max="100">85%</progress> 85%
+            </p>
+
+            <p>
+                <!-- <meter>: Biểu diễn giá trị đo lường trong một khoảng xác định -->
+                <label for="diem-chuyen-can">Mức độ chuyên cần (&lt;meter&gt;):</label>
+                <meter id="diem-chuyen-can" value="9" min="0" max="10" low="4" high="8" optimum="10">9/10</meter> 9/10 điểm
+            </p>
+        </section>
+
+        <hr>
+
+        <!-- <aside>: Nội dung phụ hoặc liên kết tham khảo đặt bên cạnh nội dung chính -->
+        <aside>
+            <h3>Ghi chú nhanh (&lt;aside&gt;)</h3>
+            <p>
+                Đây là thẻ <code>&lt;aside&gt;</code> chứa thông tin bổ sung. Khi kết hợp với CSS ở
+                <strong>Chương 3</strong>, khối này có thể được bố trí thành thanh bên (sidebar).
+            </p>
+        </aside>
+
+    </main>
+
+    <hr>
+
+    <!-- <footer>: Chân trang chứa thông tin bản quyền và liên hệ -->
+    <footer>
+        <p>
+            &copy; 2026 Nhóm Báo Cáo Học Phần <strong>Lập Trình Web PHP (IN4502N)</strong> &mdash;
+            <a href="#dau-trang">Lên đầu trang &uarr;</a>
+        </p>
+    </footer>
+
+</body>
+</html>
