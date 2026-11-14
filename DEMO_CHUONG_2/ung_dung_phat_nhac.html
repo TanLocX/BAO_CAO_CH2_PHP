@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Máy Phát Nhạc MP3 Đơn Giản</title>
+</head>
+<body>
+    <h2>Máy Phát Nhạc MP3 Đơn Giản</h2>
+
+    <p><strong>1. Đầu vào (Chọn file .mp3):</strong></p>
+    <input type="file" id="chonFile" accept=".mp3,audio/*">
+    <p>Bài đang nạp: <strong id="tenBai">podcast.mp3</strong></p>
+
+    <hr>
+
+    <p><strong>2. Đầu ra (Phát nhạc):</strong></p>
+    <!-- &#9654; là mã HTML Entity (số thập phân của ký tự Unicode U+25B6) hiển thị biểu tượng tam giác Play (▶) -->
+    <!-- onclick="nhac.play()": khi bấm nút sẽ gọi hàm phát nhạc của thẻ <audio id="nhac"> -->
+    <button type="button" onclick="nhac.play()">&#9654; Play</button>
+    <br><br>
+    <audio id="nhac" src="podcast.mp3" controls></audio>
+
+    <script>
+        const nhac = document.getElementById("nhac");
+        const chonFile = document.getElementById("chonFile");
+        const tenBai = document.getElementById("tenBai");
+
+        chonFile.onchange = function () {
+            // Lấy file đầu tiên người dùng vừa chọn
+            const file = this.files[0];
+            // Nếu bấm Cancel (không chọn file nào) thì dừng lại
+            if (!file) return;
+
+            // Tạo đường dẫn tạm (blob URL) từ file trên máy và gán vào thuộc tính src của thẻ <audio>
+            nhac.src = URL.createObjectURL(file);
+            // Cập nhật tên bài hát vừa chọn lên giao diện
+            tenBai.textContent = file.name;
+        };
+    </script>
+</body>
+</html>
