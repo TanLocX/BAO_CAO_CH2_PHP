@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Bird - Điều Khiển Bằng Cử Chỉ Tay (MediaPipe Hands)</title>
+
+  <!-- Tích hợp các thư viện MediaPipe Hands chính thức qua CDN jsDelivr -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+  <style>
+    /* =========================================================================
+       1. THIẾT LẬP GIAO DIỆN TỔNG THỂ VÀ BỐ CỤC TRUNG TÂM
+       ========================================================================= */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Khối chứa chính ở giữa màn hình */
+    .game-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .game-header {
+      text-align: center;
+    }
+
+    .game-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #38bdf8;
+      text-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+    }
+
+    .game-header p {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      margin-top: 4px;
+    }
+
+    /* Thanh thông tin điểm số & trạng thái cử chỉ phía trên khung game */
+    .hud-bar {
+      width: 420px;
+      max-width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 10px 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .hud-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hud-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      letter-spacing: 0.6px;
+    }
+
+    .hud-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #facc15;
+    }
+
+    .gesture-badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #334155;
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      transition: all 0.12s ease;
+    }
+
+    .gesture-badge.pinching {
+      background: #16a34a;
+      color: #ffffff;
+      border-color: #4ade80;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+    }
+
+    /* =========================================================================
+       2. KHUNG HTML5 CANVAS VÀ CÁC MÀN HÌNH PHỦ (START / GAME OVER)
+       ========================================================================= */
+    .stage-container {
+      position: relative;
+      width: 420px;
+      height: 600px;
+      max-width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid #38bdf8;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      background: #38bdf8;
+    }
+
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    /* Lớp phủ dùng chung cho màn hình Bắt đầu và Kết thúc */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 28px;
+      z-index: 10;
+      transition: opacity 0.2s ease;
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay h2 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #fde047;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .overlay p {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      margin-bottom: 18px;
+    }
+
+    .guide-box {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      text-align: left;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .guide-box strong {
+      color: #38bdf8;
+    }
+
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .score-card {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .score-card span {
+      display: block;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .score-card strong {
+      display: block;
+      font-size: 1.8rem;
+      margin-top: 4px;
+      color: #facc15;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 13px 32px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(34, 197, 94, 0.55);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* =========================================================================
+       3. KHUNG VIDEO WEBCAM & KHỚP XƯƠNG BÀN TAY Ở GÓC DƯỚI BÊN PHẢI
+       ========================================================================= */
+    .webcam-widget {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 260px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 2px solid #38bdf8;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      z-index: 30;
+    }
+
+    .webcam-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(30, 41, 59, 0.95);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f59e0b;
+      margin-right: 6px;
+    }
+
+    .status-dot.ready {
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .status-dot.error {
+      background: #ef4444;
+    }
+
+    .webcam-body {
+      position: relative;
+      width: 100%;
+      height: 195px;
+      background: #020617;
+    }
+
+    /* Video gốc ẩn đi vì hình ảnh và khớp xương sẽ được vẽ chồng lên #webcamCanvas */
+    #webcamVideo {
+      display: none;
+    }
+
+    /* Lật gương theo chiều ngang để thao tác tay thuận mắt người chơi */
+    #webcamCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transform: scaleX(-1);
+    }
+
+    .webcam-footer {
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    /* Tối ưu hiển thị trên màn hình nhỏ */
+    @media (max-width: 780px) {
+      .webcam-widget {
+        position: static;
+        width: 420px;
+        max-width: 100%;
+        margin-top: 8px;
+      }
+      .webcam-body {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- KHU VỰC TRÒ CHƠI CHÍNH GIỮA MÀN HÌNH -->
+  <div class="game-wrapper">
+    <div class="game-header">
+      <h1>FLAPPY BIRD - HAND GESTURE</h1>
+      <p>Chụm ngón cái &amp; ngón trỏ để điều khiển chú chim bay lên</p>
+    </div>
+
+    <!-- Thanh hiển thị điểm và trạng thái cử chỉ tay -->
+    <div class="hud-bar">
+      <div class="hud-item">
+        <span class="hud-label">Điểm hiện tại</span>
+        <span class="hud-value" id="currentScoreEl">0</span>
+      </div>
+
+      <div class="gesture-badge" id="gestureBadge">Chờ nhận diện tay...</div>
+
+      <div class="hud-item">
+        <span class="hud-label">Điểm cao nhất</span>
+        <span class="hud-value" id="highScoreEl">0</span>
+      </div>
+    </div>
+
+    <!-- Khung chứa Canvas trò chơi và các màn hình Start / Game Over -->
+    <div class="stage-container">
+      <canvas id="gameCanvas" width="420" height="600"></canvas>
+
+      <!-- MÀN HÌNH BẮT ĐẦU (START SCREEN) -->
+      <div class="overlay" id="startScreen">
+        <h2>SẴN SÀNG BAY!</h2>
+        <p>Sử dụng AI MediaPipe Hands để điều khiển trực tiếp qua webcam.</p>
+
+        <div class="guide-box">
+          <strong>Cách chơi:</strong><br>
+          1. Giơ bàn tay vào trước webcam ở góc dưới.<br>
+          2. <strong>Chụm đầu ngón cái &amp; ngón trỏ</strong> lại với nhau để chú chim nhảy lên 1 nhịp.<br>
+          3. Mở hai ngón tay ra trước khi chụm nhịp tiếp theo.<br>
+          <em>(Mẹo: Có thể dùng phím <strong>Space</strong> hoặc <strong>Click chuột</strong> làm phím dự phòng.)</em>
+        </div>
+
+        <button class="btn-primary" id="startBtn">Bắt đầu chơi</button>
+      </div>
+
+      <!-- MÀN HÌNH KẾT THÚC (GAME OVER SCREEN) -->
+      <div class="overlay hidden" id="gameOverScreen">
+        <h2>TRÒ CHƠI KẾT THÚC</h2>
+        <p id="gameOverMessage">Chú chim đã chạm chướng ngại vật!</p>
+
+        <div class="score-board">
+          <div class="score-card">
+            <span>Điểm đạt được</span>
+            <strong id="finalScoreEl">0</strong>
+          </div>
+          <div class="score-card">
+            <span>Kỷ lục (High Score)</span>
+            <strong id="finalHighScoreEl">0</strong>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="restartBtn">Chơi lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KHUNG VIDEO WEBCAM NHỎ Ở GÓC DƯỚI BÊN PHẢI -->
+  <div class="webcam-widget">
+    <div class="webcam-title">
+      <span><span class="status-dot" id="cameraDot"></span>Camera &amp; Khớp Xương AI</span>
+      <span id="distanceEl">d: --</span>
+    </div>
+    <div class="webcam-body">
+      <video id="webcamVideo" playsinline></video>
+      <canvas id="webcamCanvas" width="320" height="240"></canvas>
+    </div>
+    <div class="webcam-footer" id="cameraStatusEl">Đang khởi động webcam &amp; mô hình AI...</div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       PHẦN 1: KHAI BÁO BIẾN DOM VÀ THAM SỐ TRÒ CHƠI FLAPPY BIRD
+       ========================================================================= */
+    const gameCanvas = document.getElementById('gameCanvas');
+    const ctx = gameCanvas.getContext('2d');
+
+    const startScreen = document.getElementById('startScreen');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    const currentScoreEl = document.getElementById('currentScoreEl');
+    const highScoreEl = document.getElementById('highScoreEl');
+    const finalScoreEl = document.getElementById('finalScoreEl');
+    const finalHighScoreEl = document.getElementById('finalHighScoreEl');
+    const gameOverMessage = document.getElementById('gameOverMessage');
+    const gestureBadge = document.getElementById('gestureBadge');
+
+    const webcamVideo = document.getElementById('webcamVideo');
+    const webcamCanvas = document.getElementById('webcamCanvas');
+    const webcamCtx = webcamCanvas.getContext('2d');
+    const cameraStatusEl = document.getElementById('cameraStatusEl');
+    const cameraDot = document.getElementById('cameraDot');
+    const distanceEl = document.getElementById('distanceEl');
+
+    // Khóa lưu điểm cao nhất trong trình duyệt bằng localStorage
+    const HIGH_SCORE_STORAGE_KEY = 'flappy_hand_high_score';
+
+    // Các hằng số vật lý và kích thước trên Canvas (chuẩn hóa cho tốc độ 60 FPS)
+    const GAME_WIDTH = gameCanvas.width;
+    const GAME_HEIGHT = gameCanvas.height;
+    const GROUND_HEIGHT = 84;
+    const GRAVITY = 0.42;
+    const JUMP_FORCE = -7.6;
+    const PIPE_WIDTH = 64;
+    const PIPE_GAP = 158;
+    const PIPE_SPEED = 2.6;
+    const PIPE_SPACING = 225;
+
+    // Ngưỡng nhận diện cử chỉ chụm ngón cái và ngón trỏ (áp dụng Hysteresis chống lặp)
+    const PINCH_ON_THRESHOLD = 0.065;   // Nhỏ hơn ngưỡng này -> kích hoạt chụm & nhảy
+    const PINCH_OFF_THRESHOLD = 0.085;  // Lớn hơn ngưỡng này -> xác nhận đã mở ngón tay
+
+    // Trạng thái game: 'START' | 'PLAYING' | 'GAME_OVER'
+    let gameState = 'START';
+    let score = 0;
+    let highScore = Number(localStorage.getItem(HIGH_SCORE_STORAGE_KEY)) || 0;
+    let isPinching = false;
+    let groundOffset = 0;
+    let lastFrameTime = 0;
+
+    // Đối tượng chú chim
+    const bird = {
+      x: 108,
+      y: GAME_HEIGHT / 2 - 40,
+      radius: 16,
+      velocity: 0,
+      wingPhase: 0
+    };
+
+    // Danh sách các cặp ống nước trên màn hình
+    let pipes = [];
+
+    // Đám mây trang trí nền trời
+    const clouds = [
+      { x: 60, y: 90, scale: 1.0, speed: 0.35 },
+      { x: 220, y: 145, scale: 0.8, speed: 0.25 },
+      { x: 350, y: 75, scale: 1.15, speed: 0.4 }
+    ];
+
+    // Hiển thị điểm cao nhất đã lưu ngay khi tải trang
+    highScoreEl.textContent = highScore;
+
+    /* =========================================================================
+       PHẦN 2: CÁC HÀM ĐIỀU KHIỂN TRẠNG THÁI VÀ LOGIC GAME FLAPPY BIRD
+       ========================================================================= */
+
+    /**
+     * Đặt lại toàn bộ thông số về trạng thái ban đầu và bắt đầu ván mới.
+     */
+    function startGame() {
+      gameState = 'PLAYING';
+      score = 0;
+      bird.y = GAME_HEIGHT / 2 - 40;
+      bird.velocity = 0;
+      pipes = [];
+
+      // Tạo cặp ống đầu tiên lệch về bên phải để người chơi có thời gian chuẩn bị
+      spawnPipe(GAME_WIDTH + 90);
+
+      currentScoreEl.textContent = '0';
+      startScreen.classList.add('hidden');
+      gameOverScreen.classList.add('hidden');
+
+      // Cho chú chim nhảy nhẹ 1 nhịp mở đầu khi nhấn bắt đầu
+      flap();
+    }
+
+    /**
+     * Làm chú chim nhảy lên 1 nhịp nếu đang trong trạng thái chơi.
+     */
+    function flap() {
+      if (gameState !== 'PLAYING') return;
+      bird.velocity = JUMP_FORCE;
+    }
+
+    /**
+     * Tạo một cặp ống nước (trên & dưới) với khe hở có vị trí ngẫu nhiên hợp lý.
+     */
+    function spawnPipe(xPos) {
+      const minTopHeight = 68;
+      const maxTopHeight = GAME_HEIGHT - GROUND_HEIGHT - PIPE_GAP - 68;
+      const topHeight = Math.floor(
+        Math.random() * (maxTopHeight - minTopHeight + 1) + minTopHeight
+      );
+
+      pipes.push({
+        x: xPos,
+        topHeight: topHeight,
+        passed: false
+      });
+    }
+
+    /**
+     * Xử lý khi trò chơi kết thúc, cập nhật điểm cao nhất vào localStorage.
+     */
+    function triggerGameOver() {
+      if (gameState === 'GAME_OVER') return;
+      gameState = 'GAME_OVER';
+
+      let isNewRecord = false;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem(HIGH_SCORE_STORAGE_KEY, String(highScore));
+        highScoreEl.textContent = highScore;
+        isNewRecord = true;
+      }
+
+      finalScoreEl.textContent = score;
+      finalHighScoreEl.textContent = highScore;
+      gameOverMessage.textContent = isNewRecord
+        ? 'Tuyệt vời! Bạn vừa thiết lập kỷ lục điểm cao mới!'
+        : 'Chú chim đã chạm chướng ngại vật. Thử lại nhé!';
+
+      gameOverScreen.classList.remove('hidden');
+    }
+
+    /**
+     * Cập nhật vị trí vật lý của chim, ống nước, va chạm và điểm số theo deltaTime.
+     */
+    function updateGame(dt) {
+      // Cuộn đám mây nhẹ nhàng ở mọi trạng thái
+      for (const cloud of clouds) {
+        cloud.x -= cloud.speed * dt;
+        if (cloud.x < -90) {
+          cloud.x = GAME_WIDTH + 70;
+        }
+      }
+
+      // Hiệu ứng nhấp nhô khi đang ở màn hình Start
+      if (gameState === 'START') {
+        bird.wingPhase += 0.15 * dt;
+        bird.y = GAME_HEIGHT / 2 - 40 + Math.sin(bird.wingPhase * 0.6) * 8;
+        groundOffset = (groundOffset + PIPE_SPEED * 0.5 * dt) % 24;
+        return;
+      }
+
+      if (gameState !== 'PLAYING') {
+        return;
+      }
+
+      // Cuộn mặt đất và hiệu ứng đập cánh
+      groundOffset = (groundOffset + PIPE_SPEED * dt) % 24;
+      bird.wingPhase += 0.25 * dt;
+
+      // Áp dụng trọng lực lên chú chim
+      bird.velocity += GRAVITY * dt;
+      bird.y += bird.velocity * dt;
+
+      // Giới hạn không cho chim bay vượt lên khỏi mép trên khung hình
+      if (bird.y - bird.radius < 0) {
+        bird.y = bird.radius;
+        bird.velocity = 0;
+      }
+
+      // Kiểm tra va chạm với mặt đất
+      if (bird.y + bird.radius >= GAME_HEIGHT - GROUND_HEIGHT) {
+        bird.y = GAME_HEIGHT - GROUND_HEIGHT - bird.radius;
+        triggerGameOver();
+        return;
+      }
+
+      // Sinh thêm ống mới dựa theo khoảng cách để giữ nhịp độ đồng đều ở mọi tần số quét màn hình
+      if (pipes.length === 0 || pipes[pipes.length - 1].x <= GAME_WIDTH - PIPE_SPACING) {
+        spawnPipe(GAME_WIDTH + 20);
+      }
+
+      // Di chuyển các cặp ống, tính điểm và kiểm tra va chạm hình tròn - hình chữ nhật
+      for (let i = pipes.length - 1; i >= 0; i--) {
+        const pipe = pipes[i];
+        pipe.x -= PIPE_SPEED * dt;
+
+        // Tính điểm khi tâm chú chim vượt qua cạnh phải của cặp ống
+        if (!pipe.passed && pipe.x + PIPE_WIDTH < bird.x) {
+          pipe.passed = true;
+          score += 1;
+          currentScoreEl.textContent = score;
+        }
+
+        // Vùng va chạm thân ống trên & thân ống dưới
+        const hitTopPipe = circleIntersectsRect(
+          bird.x,
+          bird.y,
+          bird.radius - 2,
+          pipe.x,
+          0,
+          PIPE_WIDTH,
+          pipe.topHeight
+        );
+
+        const bottomY = pipe.topHeight + PIPE_GAP;
+        const bottomHeight = GAME_HEIGHT - GROUND_HEIGHT - bottomY;
+        const hitBottomPipe = circleIntersectsRect(
+          bird.x,
+          bird.y,
+          bird.radius - 2,
+          pipe.x,
+          bottomY,
+          PIPE_WIDTH,
+          bottomHeight
+        );
+
+        if (hitTopPipe || hitBottomPipe) {
+          triggerGameOver();
+          return;
+        }
+
+        // Xóa ống đã trôi khỏi màn hình bên trái để tối ưu bộ nhớ
+        if (pipe.x + PIPE_WIDTH < -10) {
+          pipes.splice(i, 1);
+        }
+      }
+    }
+
+    /**
+     * Kiểm tra va chạm chính xác giữa hình tròn (chú chim) và hình chữ nhật (ống nước).
+     */
+    function circleIntersectsRect(cx, cy, cr, rx, ry, rw, rh) {
+      const closestX = Math.max(rx, Math.min(cx, rx + rw));
+      const closestY = Math.max(ry, Math.min(cy, ry + rh));
+      const dx = cx - closestX;
+      const dy = cy - closestY;
+      return dx * dx + dy * dy < cr * cr;
+    }
+
+    /* =========================================================================
+       PHẦN 3: VẼ ĐỒ HỌA TRÒ CHƠI LÊN HTML5 CANVAS
+       ========================================================================= */
+
+    function drawGame() {
+      // 1. Nền bầu trời chuyển sắc
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT - GROUND_HEIGHT);
+      skyGrad.addColorStop(0, '#38bdf8');
+      skyGrad.addColorStop(1, '#bae6fd');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT - GROUND_HEIGHT);
+
+      // 2. Vẽ các đám mây nền
+      for (const cloud of clouds) {
+        drawCloud(cloud.x, cloud.y, cloud.scale);
+      }
+
+      // 3. Vẽ các cặp ống nước
+      for (const pipe of pipes) {
+        drawPipePair(pipe);
+      }
+
+      // 4. Vẽ mặt đất và thảm cỏ phía dưới
+      drawGround();
+
+      // 5. Vẽ chú chim
+      drawBird();
+    }
+
+    function drawCloud(x, y, scale) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.beginPath();
+      ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      ctx.arc(22, -6, 24, 0, Math.PI * 2);
+      ctx.arc(46, 0, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawPipePair(pipe) {
+      const bottomY = pipe.topHeight + PIPE_GAP;
+      const bottomHeight = GAME_HEIGHT - GROUND_HEIGHT - bottomY;
+      const capHeight = 22;
+      const capOverhang = 5;
+
+      // Tạo hiệu ứng khối trụ 3D nhẹ cho ống nước
+      const pipeGrad = ctx.createLinearGradient(pipe.x, 0, pipe.x + PIPE_WIDTH, 0);
+      pipeGrad.addColorStop(0, '#15803d');
+      pipeGrad.addColorStop(0.35, '#4ade80');
+      pipeGrad.addColorStop(1, '#166534');
+
+      ctx.fillStyle = pipeGrad;
+      ctx.strokeStyle = '#052e16';
+      ctx.lineWidth = 2.5;
+
+      // Thân ống trên
+      ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.topHeight);
+      ctx.strokeRect(pipe.x, -2, PIPE_WIDTH, pipe.topHeight + 2);
+
+      // Miệng ống trên
+      ctx.fillRect(pipe.x - capOverhang, pipe.topHeight - capHeight, PIPE_WIDTH + capOverhang * 2, capHeight);
+      ctx.strokeRect(pipe.x - capOverhang, pipe.topHeight - capHeight, PIPE_WIDTH + capOverhang * 2, capHeight);
+
+      // Thân ống dưới
+      ctx.fillRect(pipe.x, bottomY, PIPE_WIDTH, bottomHeight);
+      ctx.strokeRect(pipe.x, bottomY, PIPE_WIDTH, bottomHeight);
+
+      // Miệng ống dưới
+      ctx.fillRect(pipe.x - capOverhang, bottomY, PIPE_WIDTH + capOverhang * 2, capHeight);
+      ctx.strokeRect(pipe.x - capOverhang, bottomY, PIPE_WIDTH + capOverhang * 2, capHeight);
+    }
+
+    function drawGround() {
+      const groundY = GAME_HEIGHT - GROUND_HEIGHT;
+
+      // Dải cỏ xanh phía trên mặt đất
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(0, groundY, GAME_WIDTH, 16);
+
+      // Hoa văn sọc chéo trên dải cỏ tạo cảm giác chuyển động
+      ctx.fillStyle = '#4ade80';
+      for (let x = -24; x < GAME_WIDTH + 24; x += 24) {
+        ctx.beginPath();
+        ctx.moveTo(x - groundOffset, groundY);
+        ctx.lineTo(x + 12 - groundOffset, groundY);
+        ctx.lineTo(x + 4 - groundOffset, groundY + 16);
+        ctx.lineTo(x - 8 - groundOffset, groundY + 16);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Phần nền đất phía dưới
+      ctx.fillStyle = '#d97706';
+      ctx.fillRect(0, groundY + 16, GAME_WIDTH, GROUND_HEIGHT - 16);
+
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY);
+      ctx.lineTo(GAME_WIDTH, groundY);
+      ctx.stroke();
+    }
+
+    function drawBird() {
+      ctx.save();
+      ctx.translate(bird.x, bird.y);
+
+      // Góc nghiêng chú chim thay đổi mượt theo vận tốc lên/xuống
+      const angle = Math.max(-0.45, Math.min(1.15, bird.velocity * 0.085));
+      ctx.rotate(angle);
+
+      // Thân chim
+      ctx.fillStyle = '#facc15';
+      ctx.strokeStyle = '#713f12';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, bird.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Bụng sáng màu
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(-2, 4, bird.radius * 0.6, 0, Math.PI);
+      ctx.fill();
+
+      // Cánh chim đập theo chu kỳ
+      const wingY = Math.sin(bird.wingPhase) * 4;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(-5, 2 + wingY, 8, 5, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Mắt chim
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(6, -5, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(8, -5, 2.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mỏ chim màu cam
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(12, -1);
+      ctx.lineTo(23, 3);
+      ctx.lineTo(12, 7);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * Vòng lặp animation chính 60fps bằng requestAnimationFrame.
+     */
+    function gameLoop(timestamp) {
+      if (!lastFrameTime) lastFrameTime = timestamp;
+      const dt = Math.min((timestamp - lastFrameTime) / 16.6667, 2.5);
+      lastFrameTime = timestamp;
+
+      updateGame(dt);
+      drawGame();
+      requestAnimationFrame(gameLoop);
+    }
+
+    /* =========================================================================
+       PHẦN 4: NHẬN DIỆN BÀN TAY MEDIAPIPE HANDS & LOGIC PINCH GESTURE
+       ========================================================================= */
+
+    /**
+     * Hàm callback chạy mỗi khi MediaPipe xử lý xong một khung hình webcam.
+     */
+    function onHandResults(results) {
+      // Vẽ hình ảnh từ webcam lên canvas nhỏ ở góc dưới
+      webcamCtx.save();
+      webcamCtx.clearRect(0, 0, webcamCanvas.width, webcamCanvas.height);
+      if (results.image) {
+        webcamCtx.drawImage(results.image, 0, 0, webcamCanvas.width, webcamCanvas.height);
+      }
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+
+        // Vẽ hệ thống khung xương và 21 điểm khớp bàn tay
+        if (typeof drawConnectors === 'function' && typeof HAND_CONNECTIONS !== 'undefined') {
+          drawConnectors(webcamCtx, landmarks, HAND_CONNECTIONS, {
+            color: '#38bdf8',
+            lineWidth: 2
+          });
+        }
+        if (typeof drawLandmarks === 'function') {
+          drawLandmarks(webcamCtx, landmarks, {
+            color: '#f8fafc',
+            lineWidth: 1,
+            radius: 3
+          });
+        }
+
+        // Lấy tọa độ đầu ngón cái (điểm 4) và đầu ngón trỏ (điểm 8)
+        const thumbTip = landmarks[4];
+        const indexTip = landmarks[8];
+
+        // Tính khoảng cách Euclid 2D giữa hai đầu ngón tay (tọa độ chuẩn hóa 0..1)
+        const distance = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
+        distanceEl.textContent = `d: ${distance.toFixed(3)}`;
+
+        // Logic chống lặp bằng ngưỡng kép (Edge-trigger + Hysteresis):
+        // Chỉ gọi flap() đúng 1 lần khi chuyển từ trạng thái mở sang chụm.
+        if (distance < PINCH_ON_THRESHOLD && !isPinching) {
+          isPinching = true;
+          flap();
+        } else if (distance > PINCH_OFF_THRESHOLD && isPinching) {
+          isPinching = false;
+        }
+
+        // Vẽ đoạn thẳng nối trực tiếp ngón cái và ngón trỏ để người chơi dễ căn khoảng cách
+        const x1 = thumbTip.x * webcamCanvas.width;
+        const y1 = thumbTip.y * webcamCanvas.height;
+        const x2 = indexTip.x * webcamCanvas.width;
+        const y2 = indexTip.y * webcamCanvas.height;
+
+        webcamCtx.beginPath();
+        webcamCtx.moveTo(x1, y1);
+        webcamCtx.lineTo(x2, y2);
+        webcamCtx.strokeStyle = isPinching ? '#22c55e' : '#facc15';
+        webcamCtx.lineWidth = isPinching ? 4 : 2.5;
+        webcamCtx.stroke();
+
+        // Tô sáng hai đầu ngón tay đang theo dõi
+        for (const [px, py] of [[x1, y1], [x2, y2]]) {
+          webcamCtx.beginPath();
+          webcamCtx.arc(px, py, 6, 0, Math.PI * 2);
+          webcamCtx.fillStyle = isPinching ? '#22c55e' : '#facc15';
+          webcamCtx.fill();
+        }
+
+        // Cập nhật huy hiệu trạng thái ở thanh HUD phía trên game
+        if (isPinching) {
+          gestureBadge.textContent = 'ĐANG CHỤM TAY (NHẢY!)';
+          gestureBadge.classList.add('pinching');
+        } else {
+          gestureBadge.textContent = 'Đã nhận diện bàn tay';
+          gestureBadge.classList.remove('pinching');
+        }
+      } else {
+        // Không tìm thấy bàn tay trong khung hình -> đặt lại trạng thái chụm
+        isPinching = false;
+        distanceEl.textContent = 'd: --';
+        gestureBadge.textContent = 'Chưa thấy bàn tay';
+        gestureBadge.classList.remove('pinching');
+      }
+
+      webcamCtx.restore();
+    }
+
+    /**
+     * Khởi tạo mô hình MediaPipe Hands và kết nối webcam (có dự phòng getUserMedia).
+     */
+    async function initHandTracking() {
+      if (typeof Hands === 'undefined') {
+        cameraDot.classList.add('error');
+        cameraStatusEl.textContent = 'Không tải được CDN MediaPipe. Hãy kiểm tra mạng hoặc chơi bằng Space/Chuột.';
+        return;
+      }
+
+      try {
+        const hands = new Hands({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        });
+
+        hands.setOptions({
+          maxNumHands: 1,
+          modelComplexity: 1,
+          minDetectionConfidence: 0.65,
+          minTrackingConfidence: 0.65
+        });
+
+        hands.onResults(onHandResults);
+
+        // Ưu tiên dùng tiện ích Camera của MediaPipe để cấp khung hình cho AI
+        if (typeof Camera !== 'undefined') {
+          const camera = new Camera(webcamVideo, {
+            onFrame: async () => {
+              await hands.send({ image: webcamVideo });
+            },
+            width: 320,
+            height: 240
+          });
+          await camera.start();
+        } else if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          // Cơ chế dự phòng dùng API chuẩn trình duyệt getUserMedia
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: 320, height: 240 }
+          });
+          webcamVideo.srcObject = stream;
+          await webcamVideo.play();
+
+          const processFrame = async () => {
+            if (webcamVideo.readyState >= 2) {
+              await hands.send({ image: webcamVideo });
+            }
+            requestAnimationFrame(processFrame);
+          };
+          requestAnimationFrame(processFrame);
+        } else {
+          throw new Error('Trình duyệt không hỗ trợ truy cập webcam.');
+        }
+
+        cameraDot.classList.add('ready');
+        cameraStatusEl.textContent = 'AI sẵn sàng! Chụm ngón cái & trỏ để nhảy.';
+      } catch (err) {
+        cameraDot.classList.add('error');
+        cameraStatusEl.textContent = 'Chưa bật được webcam. Hãy cấp quyền camera hoặc dùng Space/Chuột.';
+        gestureBadge.textContent = 'Chế độ Space / Chuột';
+        console.warn('Lỗi khởi tạo MediaPipe / Webcam:', err);
+      }
+    }
+
+    /* =========================================================================
+       PHẦN 5: GẮN SỰ KIỆN NÚT BẤM, PHÍM SPACE & KHỞI CHẠY CHƯƠNG TRÌNH
+       ========================================================================= */
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+
+    // Cho phép nhấp chuột trực tiếp vào canvas để nhảy (tiện kiểm thử)
+    gameCanvas.addEventListener('mousedown', () => {
+      if (gameState === 'PLAYING') {
+        flap();
+      }
+    });
+
+    // Hỗ trợ phím Space để bắt đầu hoặc làm chim nhảy
+    window.addEventListener('keydown', (event) => {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        if (gameState === 'START' || gameState === 'GAME_OVER') {
+          startGame();
+        } else {
+          flap();
+        }
+      }
+    });
+
+    // Khởi động vòng lặp đồ họa game và hệ thống nhận diện bàn tay
+    requestAnimationFrame(gameLoop);
+    initHandTracking();
+  </script>
+</body>
+</html>

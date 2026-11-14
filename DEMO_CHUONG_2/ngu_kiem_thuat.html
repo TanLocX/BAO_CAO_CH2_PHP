@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ngự Kiếm Thuật - Siêu Mượt 60FPS</title>
+
+  <!-- Thư viện MediaPipe Hands qua CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #030712;
+      color: #e2e8f0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+    }
+
+    #swordCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* HUD không dùng backdrop-filter để tránh tụt FPS khi compositing */
+    .hud {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      background: rgba(6, 13, 30, 0.9);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      border-radius: 10px;
+      padding: 12px 16px;
+      max-width: 340px;
+      pointer-events: none;
+    }
+    .hud h1 {
+      font-size: 1.05rem;
+      color: #5eead4;
+      margin-bottom: 6px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(20, 184, 166, 0.2);
+      color: #facc15;
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      margin-bottom: 6px;
+    }
+    .hud ul {
+      list-style: none;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .hud li strong { color: #38bdf8; }
+
+    /* Khung webcam góc dưới dùng trực tiếp thẻ <video> (GPU hardware accelerated) */
+    .cam-box {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      width: 210px;
+      height: 158px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(45, 212, 191, 0.45);
+      background: #020617;
+      z-index: 10;
+    }
+    #webcamVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      opacity: 0.75;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="swordCanvas"></canvas>
+
+  <div class="hud">
+    <h1>⚔️ NGỰ KIẾM THUẬT (60FPS)</h1>
+    <div id="gestureStatus" class="status-badge">Đang khởi tạo Webcam / AI...</div>
+    <ul>
+      <li>☝️ <strong>Kiếm Chỉ (1-2 ngón):</strong> Phi kiếm nối đuôi uốn lượn</li>
+      <li>🖐️ <strong>Trận Pháp (Xòe 5 ngón):</strong> Xoay vòng quanh bàn tay</li>
+      <li>✊ <strong>Tụ Kiếm (Nắm chặt tay):</strong> Tụ kiếm phát sáng giữa tay</li>
+    </ul>
+  </div>
+
+  <div class="cam-box">
+    <video id="webcamVideo" playsinline muted></video>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. TỐI ƯU HÓA ĐỒ HỌA: VẼ SẴN (PRE-RENDER) THANH KIẾM RA OFFSCREEN CANVAS
+       Giúp loại bỏ hoàn toàn shadowBlur mỗi khung hình -> Tăng FPS gấp ~10 lần
+       ========================================================================= */
+    const canvas = document.getElementById('swordCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const videoEl = document.getElementById('webcamVideo');
+    const statusEl = document.getElementById('gestureStatus');
+
+    let W = (canvas.width = window.innerWidth);
+    let H = (canvas.height = window.innerHeight);
+    window.addEventListener('resize', () => {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    });
+
+    // Tạo sprite thanh kiếm phát sáng một lần duy nhất khi khởi động
+    function createSwordSprite(len, color, glow) {
+      const off = document.createElement('canvas');
+      off.width = 96;
+      off.height = 48;
+      const octx = off.getContext('2d');
+      octx.translate(48, 24);
+
+      octx.shadowColor = glow;
+      octx.shadowBlur = 12;
+
+      // Thân kiếm
+      octx.beginPath();
+      octx.moveTo(len * 0.65, 0);
+      octx.lineTo(-len * 0.2, -3.5);
+      octx.lineTo(-len * 0.35, 0);
+      octx.lineTo(-len * 0.2, 3.5);
+      octx.closePath();
+      octx.fillStyle = color;
+      octx.fill();
+
+      // Sống kiếm trắng
+      octx.shadowBlur = 0;
+      octx.beginPath();
+      octx.moveTo(len * 0.58, 0);
+      octx.lineTo(-len * 0.24, 0);
+      octx.strokeStyle = '#ffffff';
+      octx.lineWidth = 1.3;
+      octx.stroke();
+
+      // Chắn kiếm & chuôi
+      octx.beginPath();
+      octx.moveTo(-len * 0.22, -7);
+      octx.lineTo(-len * 0.22, 7);
+      octx.moveTo(-len * 0.22, 0);
+      octx.lineTo(-len * 0.46, 0);
+      octx.strokeStyle = '#fbbf24';
+      octx.lineWidth = 2;
+      octx.stroke();
+
+      return off;
+    }
+
+    const cyanSprite = createSwordSprite(36, '#00f5d4', '#06b6d4');
+    const goldSprite = createSwordSprite(44, '#fbbf24', '#f59e0b');
+
+    // Pre-render quả cầu tụ kiếm để không tạo radialGradient mỗi frame
+    const orbSprite = (() => {
+      const off = document.createElement('canvas');
+      off.width = 240;
+      off.height = 240;
+      const octx = off.getContext('2d');
+      const grad = octx.createRadialGradient(120, 120, 4, 120, 120, 115);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      grad.addColorStop(0.25, 'rgba(251, 191, 36, 0.7)');
+      grad.addColorStop(0.6, 'rgba(0, 245, 212, 0.3)');
+      grad.addColorStop(1, 'rgba(0, 245, 212, 0)');
+      octx.fillStyle = grad;
+      octx.beginPath();
+      octx.arc(120, 120, 115, 0, Math.PI * 2);
+      octx.fill();
+      return off;
+    })();
+
+    const SWORD_COUNT = 36;
+    const TRAIL_LENGTH = 5;
+
+    let mode = 'FOLLOW';
+    let target = { x: W / 2, y: H / 2 };
+    let smoothTarget = { x: W / 2, y: H / 2 };
+    let handDetected = false;
+
+    window.addEventListener('mousemove', (e) => {
+      if (!handDetected) {
+        target.x = e.clientX;
+        target.y = e.clientY;
+      }
+    });
+    window.addEventListener('mousedown', () => { if (!handDetected) mode = 'GATHER'; });
+    window.addEventListener('mouseup', () => { if (!handDetected) mode = 'FOLLOW'; });
+
+    const swords = Array.from({ length: SWORD_COUNT }, (_, i) => {
+      const isGold = i % 5 === 0;
+      return {
+        x: W / 2 + (Math.random() - 0.5) * 250,
+        y: H / 2 + (Math.random() - 0.5) * 250,
+        vx: 0,
+        vy: 0,
+        angle: 0,
+        isGold,
+        sprite: isGold ? goldSprite : cyanSprite,
+        orbitRadius: 105 + (i % 3) * 40,
+        orbitSpeed: (i % 2 === 0 ? 1 : -1) * (0.03 + (i % 3) * 0.008),
+        orbitPhase: (i / SWORD_COUNT) * Math.PI * 2,
+        trail: []
+      };
+    });
+
+    /* =========================================================================
+       2. NHẬN DIỆN CỬ CHỈ TAY SIÊU NHẸ (modelComplexity: 0 + giới hạn tần số AI)
+       ========================================================================= */
+    function isFingerExtended(lm, tipIdx, pipIdx) {
+      const wx = lm[0].x, wy = lm[0].y;
+      const dTip = (lm[tipIdx].x - wx) ** 2 + (lm[tipIdx].y - wy) ** 2;
+      const dPip = (lm[pipIdx].x - wx) ** 2 + (lm[pipIdx].y - wy) ** 2;
+      return dTip > dPip * 1.25; // Dùng bình phương khoảng cách (bỏ căn bậc 2)
+    }
+
+    let lastStatus = '';
+    function setStatus(txt) {
+      if (txt !== lastStatus) {
+        lastStatus = txt;
+        statusEl.textContent = txt;
+      }
+    }
+
+    function onResults(results) {
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        handDetected = true;
+        const lm = results.multiHandLandmarks[0];
+
+        const indexUp = isFingerExtended(lm, 8, 6);
+        const middleUp = isFingerExtended(lm, 12, 10);
+        const ringUp = isFingerExtended(lm, 16, 14);
+        const pinkyUp = isFingerExtended(lm, 20, 18);
+
+        const palmX = (1 - (lm[0].x + lm[5].x + lm[9].x + lm[17].x) * 0.25) * W;
+        const palmY = ((lm[0].y + lm[5].y + lm[9].y + lm[17].y) * 0.25) * H;
+
+        if (!indexUp && !middleUp && !ringUp && !pinkyUp) {
+          mode = 'GATHER';
+          target.x = palmX;
+          target.y = palmY;
+          setStatus('✊ TỤ KIẾM: Vạn Kiếm Quy Tâm');
+        } else if (indexUp && middleUp && ringUp && pinkyUp) {
+          mode = 'ORBIT';
+          target.x = palmX;
+          target.y = palmY;
+          setStatus('🖐️ TRẬN PHÁP: Bát Quái Kiếm Trận');
+        } else {
+          mode = 'FOLLOW';
+          target.x = (1 - lm[8].x) * W;
+          target.y = lm[8].y * H;
+          setStatus('☝️ KIẾM CHỈ: Ngự Kiếm Phi Hành');
+        }
+      } else {
+        handDetected = false;
+        setStatus('Đưa tay trước camera (hoặc di chuột)');
+      }
+    }
+
+    async function initMediaPipe() {
+      try {
+        const hands = new Hands({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        });
+        // modelComplexity: 0 (Lite) nhanh gấp ~3 lần bản Full mà vẫn bắt cử chỉ chính xác
+        hands.setOptions({
+          maxNumHands: 1,
+          modelComplexity: 0,
+          minDetectionConfidence: 0.55,
+          minTrackingConfidence: 0.55
+        });
+        hands.onResults(onResults);
+
+        // Chặn gửi chồng khung hình và giới hạn AI ở ~22 FPS để nhường GPU cho Canvas 60 FPS
+        let busy = false;
+        let lastSend = 0;
+        const camera = new Camera(videoEl, {
+          onFrame: async () => {
+            const now = performance.now();
+            if (busy || now - lastSend < 42) return;
+            busy = true;
+            lastSend = now;
+            try {
+              await hands.send({ image: videoEl });
+            } finally {
+              busy = false;
+            }
+          },
+          width: 256,
+          height: 192
+        });
+        await camera.start();
+      } catch (err) {
+        setStatus('Chế độ Chuột (Không bật được Camera)');
+      }
+    }
+
+    /* =========================================================================
+       3. VÒNG LẶP ĐỒ HỌA 60FPS (GOM NHÓM DRAW CALLS)
+       ========================================================================= */
+    let time = 0;
+    function animate() {
+      time += 0.035;
+
+      // Xóa mờ nền tạo đuôi sáng mượt
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = 'rgba(3, 7, 18, 0.32)';
+      ctx.fillRect(0, 0, W, H);
+
+      smoothTarget.x += (target.x - smoothTarget.x) * 0.22;
+      smoothTarget.y += (target.y - smoothTarget.y) * 0.22;
+
+      ctx.globalCompositeOperation = 'lighter';
+
+      if (mode === 'ORBIT') {
+        ctx.beginPath();
+        ctx.arc(smoothTarget.x, smoothTarget.y, 140 + Math.sin(time * 2) * 5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0, 245, 212, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      } else if (mode === 'GATHER') {
+        const scale = 1 + Math.sin(time * 6) * 0.12;
+        const size = 240 * scale;
+        ctx.drawImage(orbSprite, smoothTarget.x - size * 0.5, smoothTarget.y - size * 0.5, size, size);
+      }
+
+      // Cập nhật vật lý cho từng thanh kiếm
+      for (let i = 0; i < SWORD_COUNT; i++) {
+        const s = swords[i];
+        let destX, destY;
+
+        if (mode === 'FOLLOW') {
+          if (i === 0) {
+            destX = smoothTarget.x + Math.cos(time * 2) * 12;
+            destY = smoothTarget.y + Math.sin(time * 2) * 12;
+          } else {
+            const prev = swords[i - 1];
+            const wave = Math.sin(time * 3 - i * 0.45) * 9;
+            const perpAngle = prev.angle + 1.5708;
+            destX = prev.x - Math.cos(prev.angle) * 16 + Math.cos(perpAngle) * wave;
+            destY = prev.y - Math.sin(prev.angle) * 16 + Math.sin(perpAngle) * wave;
+          }
+          const ease = i === 0 ? 0.25 : 0.28;
+          s.vx = (destX - s.x) * ease;
+          s.vy = (destY - s.y) * ease;
+        } else if (mode === 'ORBIT') {
+          s.orbitPhase += s.orbitSpeed;
+          destX = smoothTarget.x + Math.cos(s.orbitPhase) * s.orbitRadius;
+          destY = smoothTarget.y + Math.sin(s.orbitPhase) * s.orbitRadius;
+          s.vx = (destX - s.x) * 0.16;
+          s.vy = (destY - s.y) * 0.16;
+        } else {
+          const jitterAngle = s.orbitPhase + time * 5;
+          const r = 6 + (i % 5) * 3;
+          destX = smoothTarget.x + Math.cos(jitterAngle) * r;
+          destY = smoothTarget.y + Math.sin(jitterAngle) * r;
+          s.vx = (destX - s.x) * 0.26;
+          s.vy = (destY - s.y) * 0.26;
+        }
+
+        s.x += s.vx;
+        s.y += s.vy;
+
+        if (s.vx * s.vx + s.vy * s.vy > 0.09) {
+          s.angle = Math.atan2(s.vy, s.vx);
+        }
+
+        s.trail.push(s.x, s.y);
+        if (s.trail.length > TRAIL_LENGTH * 2) {
+          s.trail.splice(0, 2);
+        }
+      }
+
+      // Gom toàn bộ vệt sáng (trails) thành đúng 2 lệnh stroke() thay vì 36 lệnh
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(0, 245, 212, 0.32)';
+      ctx.beginPath();
+      for (let i = 0; i < SWORD_COUNT; i++) {
+        const s = swords[i];
+        if (s.isGold || s.trail.length < 4) continue;
+        ctx.moveTo(s.trail[0], s.trail[1]);
+        for (let t = 2; t < s.trail.length; t += 2) ctx.lineTo(s.trail[t], s.trail[t + 1]);
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.42)';
+      ctx.beginPath();
+      for (let i = 0; i < SWORD_COUNT; i++) {
+        const s = swords[i];
+        if (!s.isGold || s.trail.length < 4) continue;
+        ctx.moveTo(s.trail[0], s.trail[1]);
+        for (let t = 2; t < s.trail.length; t += 2) ctx.lineTo(s.trail[t], s.trail[t + 1]);
+      }
+      ctx.stroke();
+
+      // Vẽ các thanh kiếm từ sprite đã dựng sẵn (không tốn chi phí shadowBlur)
+      for (let i = 0; i < SWORD_COUNT; i++) {
+        const s = swords[i];
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.angle);
+        ctx.drawImage(s.sprite, -48, -24);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    initMediaPipe();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo chuyên đề IN4502N - Chương 2: Ngôn ngữ đánh dấu siêu văn bản (HTML)</title>
+</head>
+<body bgcolor="#f1f5f9">
+
+  <!-- Khung trang báo cáo chuẩn A4 căn giữa hoàn toàn bằng thuộc tính HTML thuần -->
+  <table width="920" align="center" cellpadding="32" cellspacing="0" border="1" bgcolor="#ffffff">
+    <tr>
+      <td>
+        <div id="dau-trang"></div>
+
+        <!-- Phần đầu trang (Header hành chính - học thuật 2 cột) -->
+        <table width="100%" border="0" cellpadding="4" cellspacing="0">
+          <tr>
+            <td width="50%" align="center" valign="top">
+              <strong>TRƯỜNG ĐẠI HỌC ĐỒNG THÁP</strong><br>
+              KHOA CÔNG NGHỆ THÔNG TIN<br>
+              <strong>BỘ MÔN KHOA HỌC MÁY TÍNH</strong><br>
+              <hr width="180">
+            </td>
+            <td width="50%" align="center" valign="top">
+              <strong>BÁO CÁO CHUYÊN ĐỀ HỌC PHẦN</strong><br>
+              <strong>LẬP TRÌNH WEB PHP (MÃ HP: IN4502N)</strong><br>
+              <em>Số tín chỉ: 03 (30 LT / 30 TH)</em><br>
+              <hr width="220">
+            </td>
+          </tr>
+        </table>
+
+        <br>
+        <hr>
+
+        <!-- Tiêu đề chính báo cáo -->
+        <h1 align="center">CHƯƠNG 2: NGÔN NGỮ ĐÁNH DẤU SIÊU VĂN BẢN (HTML)</h1>
+        <p align="center">
+          <em>Tài liệu hệ thống hóa lý thuyết, cú pháp chuẩn HTML5 và ứng dụng thiết kế giao diện biểu mẫu cho lập trình Web PHP</em><br>
+          <small>Giảng viên hướng dẫn học phần: Nguyễn Thị Thanh Thảo &bull; Nguyễn Thị Mỹ Dung &nbsp;|&nbsp; Mục tiêu chuẩn đầu ra: <strong>CLO1</strong></small>
+        </p>
+
+        <!-- Khối Tóm tắt (Abstract) và Từ khóa (Keywords) -->
+        <table width="100%" border="1" cellpadding="16" cellspacing="0" bgcolor="#f8fafc">
+          <tr>
+            <td>
+              <p align="justify">
+                <strong>Tóm tắt (Abstract):</strong> Báo cáo này trình bày có hệ thống cơ sở lý thuyết, cấu trúc tài liệu, hệ thống thẻ đánh dấu thông dụng và nguyên tắc lựa chọn thẻ tối ưu trong ngôn ngữ HTML5 phục vụ học phần <em>Lập trình Web PHP (IN4502N)</em>. Tài liệu được biên soạn và trình bày hoàn toàn bằng mã HTML thuần (không sử dụng CSS và JavaScript) nhằm minh chứng trực tiếp năng lực tổ chức bố cục, phân cấp ngữ nghĩa, biểu diễn bảng dữ liệu, tích hợp đa phương tiện và xây dựng biểu mẫu giao tiếp Client&ndash;Server (HTTP GET/POST) trước khi xử lý dữ liệu phía máy chủ PHP.
+              </p>
+              <p>
+                <strong>Từ khóa (Keywords):</strong> <em>HTML5, HyperText Markup Language, DOM, Semantic Tags, Web Form, HTTP GET/POST, PHP.</em>
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <br>
+
+        <!-- Mục lục phân cấp có liên kết neo nội bộ -->
+        <table width="100%" border="1" cellpadding="16" cellspacing="0" bgcolor="#f8fafc">
+          <tr>
+            <td>
+              <h2>MỤC LỤC</h2>
+              <p>
+                <strong><a href="#muc-1">1. GIỚI THIỆU TỔNG QUAN VỀ HTML</a></strong><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-1-1">1.1. Khái niệm và cơ chế hoạt động</a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-1-2">1.2. Lịch sử phát triển các phiên bản HTML</a><br>
+                <strong><a href="#muc-2">2. CẤU TRÚC TÀI LIỆU VÀ CÚ PHÁP THẺ HTML</a></strong><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-2-1">2.1. Cấu trúc chuẩn HTML5 và cây DOM</a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-2-2">2.2. Phân loại thẻ HTML và cấu trúc thuộc tính</a><br>
+                <strong><a href="#muc-3">3. HỆ THỐNG CÁC NHÓM THẺ HTML THÔNG DỤNG</a></strong><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-3-1">3.1. Nhóm thẻ tiêu đề và định dạng văn bản</a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-3-2">3.2. Nhóm thẻ danh sách (Lists)</a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-3-3">3.3. Nhóm thẻ liên kết và đa phương tiện (Media)</a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-3-4">3.4. Nhóm thẻ bảng biểu dữ liệu (Tables)</a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<a href="#muc-3-5">3.5. Nhóm thẻ biểu mẫu (Form) và cơ chế giao tiếp với PHP</a><br>
+                <strong><a href="#muc-4">4. PHÂN TÍCH VÀ ĐÁNH GIÁ LỰA CHỌN THẺ TỐI ƯU (ĐÁP ỨNG CHUẨN ĐẦU RA CLO1)</a></strong><br>
+                <strong><a href="#muc-5">5. KẾT LUẬN VÀ TÀI LIỆU THAM KHẢO</a></strong>
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <br>
+        <hr>
+
+        <!-- CHƯƠNG/MỤC 1 -->
+        <div id="muc-1">
+          <h2>1. GIỚI THIỆU TỔNG QUAN VỀ HTML</h2>
+
+          <div id="muc-1-1">
+            <h3>1.1. Khái niệm và cơ chế hoạt động</h3>
+            <p align="justify">
+              <strong>HTML</strong> (viết tắt của <em>HyperText Markup Language</em> &ndash; Ngôn ngữ đánh dấu siêu văn bản) là ngôn ngữ nền tảng dùng để mô tả cấu trúc và ngữ nghĩa nội dung của một trang web trên mạng World Wide Web. HTML không phải là ngôn ngữ lập trình thực thi thuật toán mà là ngôn ngữ đánh dấu sử dụng các cặp thẻ (<em>tags</em>) nhằm định danh vai trò của từng thành phần dữ liệu như tiêu đề, đoạn văn, danh sách, bảng biểu, hình ảnh hay biểu mẫu nhập liệu.
+            </p>
+            <p align="justify">
+              Trong kiến trúc ứng dụng Web sử dụng PHP, HTML đóng vai trò là lớp giao diện đầu cuối (<em>Front-end Presentation</em>) chạy tại trình duyệt người dùng (<em>Client</em>). Khi trình duyệt gửi yêu cầu HTTP tới máy chủ Web (như Apache hoặc Nginx), trình thông dịch PHP xử lý nghiệp vụ và truy vấn cơ sở dữ liệu MySQL ở phía máy chủ (<em>Server-side</em>), sau đó xuất ra mã nguồn HTML thuần trả về cho trình duyệt phân tích cú pháp (<em>Parsing</em>) và hiển thị thành giao diện trực quan.
+            </p>
+          </div>
+
+          <div id="muc-1-2">
+            <h3>1.2. Lịch sử phát triển các phiên bản HTML</h3>
+            <p align="justify">
+              Từ phiên bản sơ khai do Tim Berners-Lee đề xuất tại CERN vào đầu thập niên 1990 đến chuẩn HTML5 hiện đại do W3C và WHATWG phát triển, HTML đã liên tục được mở rộng về tính chuẩn hóa cấu trúc, hỗ trợ đa phương tiện gốc và khả năng tương tác biểu mẫu. Bảng 1.1 tóm tắt các cột mốc phát triển tiêu biểu của chuẩn HTML.
+            </p>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0">
+              <caption><strong>Bảng 1.1: Các cột mốc phát triển chủ yếu của ngôn ngữ HTML</strong></caption>
+              <thead>
+                <tr bgcolor="#e2e8f0">
+                  <th width="16%" align="center">Phiên bản</th>
+                  <th width="14%" align="center">Năm công bố</th>
+                  <th width="20%" align="center">Tổ chức chuẩn hóa</th>
+                  <th width="50%" align="left">Đặc trưng kỹ thuật nổi bật</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td align="center"><strong>HTML 2.0</strong></td>
+                  <td align="center">1995</td>
+                  <td align="center">IETF</td>
+                  <td>Chuẩn hóa bộ thẻ siêu văn bản cơ bản đầu tiên và hỗ trợ biểu mẫu nhập liệu sơ khai.</td>
+                </tr>
+                <tr>
+                  <td align="center"><strong>HTML 4.01</strong></td>
+                  <td align="center">1999</td>
+                  <td align="center">W3C</td>
+                  <td>Tách biệt rõ nội dung với trình bày thông qua CSS, bổ sung thuộc tính quốc tế hóa và khả năng tiếp cận.</td>
+                </tr>
+                <tr>
+                  <td align="center"><strong>XHTML 1.0</strong></td>
+                  <td align="center">2000</td>
+                  <td align="center">W3C</td>
+                  <td>Áp dụng quy tắc cú pháp nghiêm ngặt của XML (bắt buộc đóng thẻ, chữ thường, thuộc tính đặt trong dấu ngoặc kép).</td>
+                </tr>
+                <tr>
+                  <td align="center"><strong>HTML5</strong></td>
+                  <td align="center">2014 &ndash; nay</td>
+                  <td align="center">W3C / WHATWG</td>
+                  <td>Đơn giản hóa khai báo <code>&lt;!DOCTYPE html&gt;</code>, bổ sung thẻ ngữ nghĩa, đa phương tiện gốc (<code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code>) và các kiểu <code>&lt;input&gt;</code> hiện đại.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <br>
+        <hr>
+
+        <!-- MỤC 2 -->
+        <div id="muc-2">
+          <h2>2. CẤU TRÚC TÀI LIỆU VÀ CÚ PHÁP THẺ HTML</h2>
+
+          <div id="muc-2-1">
+            <h3>2.1. Cấu trúc chuẩn HTML5 và cây DOM</h3>
+            <p align="justify">
+              Một tài liệu HTML5 hợp lệ luôn được tổ chức theo cấu trúc phân cấp dạng cây, gọi là <strong>DOM</strong> (<em>Document Object Model</em>). Khai báo <code>&lt;!DOCTYPE html&gt;</code> ở dòng đầu tiên thông báo cho trình duyệt sử dụng chế độ chuẩn (<em>Standards Mode</em>), đảm bảo hiển thị nhất quán trên mọi trình duyệt. Tiếp theo là phần tử gốc <code>&lt;html&gt;</code> bao bọc hai nhánh chính là <code>&lt;head&gt;</code> (chứa siêu dữ liệu không hiển thị trực tiếp) và <code>&lt;body&gt;</code> (chứa toàn bộ nội dung hiển thị trên khung nhìn).
+            </p>
+
+            <table width="100%" border="1" cellpadding="12" cellspacing="0" bgcolor="#f8fafc">
+              <tr>
+                <td>
+                  <strong>Ví dụ 2.1: Khung tài liệu HTML5 chuẩn tối thiểu và sơ đồ phân cấp cây DOM</strong>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="vi"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Trang Web PHP Đầu Tiên&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Xin chào học phần IN4502N&lt;/h1&gt;
+  &lt;p&gt;Nội dung văn bản được tổ chức theo cấu trúc cây DOM.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Sơ đồ cây DOM tương ứng:
+Document
+ └── html [lang="vi"]
+      ├── head
+      │    ├── meta [charset="UTF-8"]
+      │    └── title ("Trang Web PHP Đầu Tiên")
+      └── body
+           ├── h1 ("Xin chào học phần IN4502N")
+           └── p  ("Nội dung văn bản...")</code></pre>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0">
+              <caption><strong>Bảng 2.1: Vai trò các thành phần cốt lõi trong cấu trúc tài liệu HTML5</strong></caption>
+              <thead>
+                <tr bgcolor="#e2e8f0">
+                  <th width="22%" align="left">Thành phần</th>
+                  <th width="20%" align="center">Vị trí phân cấp</th>
+                  <th width="58%" align="left">Chức năng và ý nghĩa kỹ thuật</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>&lt;!DOCTYPE html&gt;</code></td>
+                  <td align="center">Đầu tệp (Dòng 1)</td>
+                  <td>Chỉ thị loại tài liệu giúp trình duyệt kích hoạt chế độ dựng trang chuẩn HTML5, tránh lỗi chế độ tương thích cũ (<em>Quirks Mode</em>).</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;html lang="vi"&gt;</code></td>
+                  <td align="center">Phần tử gốc</td>
+                  <td>Bao bọc toàn bộ tài liệu; thuộc tính <code>lang="vi"</code> xác định ngôn ngữ chính phục vụ trình đọc màn hình và công cụ tìm kiếm.</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;head&gt;</code></td>
+                  <td align="center">Con của <code>&lt;html&gt;</code></td>
+                  <td>Lưu trữ siêu dữ liệu (<em>metadata</em>) như bảng mã ký tự, tiêu đề tab trình duyệt, mô tả trang và liên kết tài nguyên ngoài.</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;meta charset="UTF-8"&gt;</code></td>
+                  <td align="center">Con của <code>&lt;head&gt;</code></td>
+                  <td>Thiết lập bộ mã hóa Unicode UTF-8 nhằm hiển thị chính xác tiếng Việt có dấu, tránh hiện tượng lỗi phông chữ.</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;title&gt;</code></td>
+                  <td align="center">Con của <code>&lt;head&gt;</code></td>
+                  <td>Định nghĩa tên trang hiển thị trên thanh tiêu đề trình duyệt, mục đánh dấu (<em>bookmark</em>) và kết quả tìm kiếm.</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;body&gt;</code></td>
+                  <td align="center">Con của <code>&lt;html&gt;</code></td>
+                  <td>Chứa toàn bộ văn bản, hình ảnh, âm thanh, bảng biểu, liên kết và biểu mẫu hiển thị trực tiếp tới người dùng cuối.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="muc-2-2">
+            <h3>2.2. Phân loại thẻ HTML và cấu trúc thuộc tính</h3>
+            <p align="justify">
+              Xét theo cấu trúc đóng mở, phần tử HTML được chia thành hai loại: <strong>thẻ đôi</strong> (<em>Container tags</em>) gồm thẻ mở, nội dung và thẻ đóng (ví dụ: <code>&lt;p&gt;Nội dung&lt;/p&gt;</code>) và <strong>thẻ đơn / thẻ rỗng</strong> (<em>Void elements</em>) không chứa phần tử con và không có thẻ đóng (ví dụ: <code>&lt;meta&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>).
+            </p>
+            <p align="justify">
+              Xét theo cơ chế hiển thị mặc định, các phần tử được chia thành hai nhóm chính: phần tử cấp khối (<em>Block-level</em> như <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;table&gt;</code>) luôn bắt đầu trên một dòng mới và chiếm toàn bộ chiều rộng khả dụng; phần tử nội tuyến (<em>Inline-level</em> như <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;code&gt;</code>) chỉ chiếm đúng độ rộng nội dung bên trong và nằm cùng dòng với các phần tử lân cận.
+            </p>
+            <p align="justify">
+              Mỗi thẻ mở có thể chứa một hoặc nhiều <strong>thuộc tính</strong> (<em>Attributes</em>) theo cú pháp <code>tên_thuộc_tính="giá_trị"</code> để bổ sung thông tin định danh (<code>id</code>, <code>class</code>), hành vi hoặc nguồn tài nguyên (<code>href</code>, <code>src</code>, <code>alt</code>, <code>name</code>).
+            </p>
+          </div>
+        </div>
+
+        <br>
+        <hr>
+
+        <!-- MỤC 3 -->
+        <div id="muc-3">
+          <h2>3. HỆ THỐNG CÁC NHÓM THẺ HTML THÔNG DỤNG</h2>
+
+          <div id="muc-3-1">
+            <h3>3.1. Nhóm thẻ tiêu đề và định dạng văn bản</h3>
+            <p align="justify">
+              Hệ thống tiêu đề từ <code>&lt;h1&gt;</code> đến <code>&lt;h6&gt;</code> thiết lập cấu trúc đề mục phân cấp từ cấp cao nhất (<code>&lt;h1&gt;</code>) đến chi tiết nhất (<code>&lt;h6&gt;</code>). Các thẻ văn bản như <code>&lt;p&gt;</code> (đoạn văn), <code>&lt;strong&gt;</code> (nhấn mạnh mức độ quan trọng cao), <code>&lt;em&gt;</code> (nhấn giọng ngữ nghĩa), <code>&lt;mark&gt;</code> (tô sáng thuật ngữ), <code>&lt;sub&gt;</code>/<code>&lt;sup&gt;</code> (chỉ số dưới/trên như H<sub>2</sub>O hoặc x<sup>2</sup>), <code>&lt;code&gt;</code> (mã nguồn nội tuyến) và <code>&lt;blockquote&gt;</code> (trích dẫn học thuật) giúp truyền đạt chính xác cấu trúc nội dung khoa học.
+            </p>
+            <blockquote cite="https://html.spec.whatwg.org/">
+              <p align="justify">
+                <em>Trích dẫn chuẩn kỹ thuật WHATWG:</em> Phần tử đánh dấu siêu văn bản phải được lựa chọn theo đúng mục đích ngữ nghĩa của dữ liệu thay vì chỉ dựa vào kích thước phông chữ mặc định mà trình duyệt hiển thị.
+              </p>
+            </blockquote>
+          </div>
+
+          <div id="muc-3-2">
+            <h3>3.2. Nhóm thẻ danh sách (Lists)</h3>
+            <p align="justify">
+              HTML cung cấp ba cấu trúc danh sách chuẩn để trình bày các tập hợp mục tin có hoặc không có thứ tự:
+            </p>
+            <ul>
+              <li><strong>Danh sách không thứ tự (<code>&lt;ul&gt;</code> &ndash; Unordered List):</strong> Dùng cho các mục liệt kê ngang hàng, mỗi mục đặt trong thẻ <code>&lt;li&gt;</code>.</li>
+              <li><strong>Danh sách có thứ tự (<code>&lt;ol&gt;</code> &ndash; Ordered List):</strong> Dùng cho quy trình các bước tuần tự hoặc xếp hạng theo chỉ số.</li>
+              <li><strong>Danh sách định nghĩa (<code>&lt;dl&gt;</code> &ndash; Description List):</strong> Gồm cặp thuật ngữ <code>&lt;dt&gt;</code> và phần giải thích <code>&lt;dd&gt;</code>, rất phù hợp để lập bảng chú giải thuật ngữ.</li>
+            </ul>
+            <dl>
+              <dt><strong>HTML5</strong></dt>
+              <dd>Phiên bản tiêu chuẩn hiện hành của ngôn ngữ đánh dấu siêu văn bản, tích hợp ngữ nghĩa và đa phương tiện.</dd>
+              <dt><strong>PHP</strong></dt>
+              <dd>Ngôn ngữ kịch bản phía máy chủ (<em>Server-side Scripting</em>) tiếp nhận dữ liệu từ biểu mẫu HTML để xử lý động.</dd>
+            </dl>
+          </div>
+
+          <div id="muc-3-3">
+            <h3>3.3. Nhóm thẻ liên kết và đa phương tiện (Media)</h3>
+            <p align="justify">
+              Khả năng siêu liên kết được thực hiện thông qua thẻ <code>&lt;a&gt;</code> với thuộc tính <code>href</code> (điều hướng trang ngoài, trang nội bộ hoặc neo tới <code>#id</code> trong cùng tài liệu như mục lục ở đầu báo cáo). Đối với nội dung trực quan và âm thanh, HTML5 sử dụng cặp thẻ <code>&lt;figure&gt;</code> và <code>&lt;figcaption&gt;</code> để gắn chú thích chuẩn cho hình ảnh <code>&lt;img&gt;</code>, đồng thời cung cấp thẻ <code>&lt;audio&gt;</code> và <code>&lt;video&gt;</code> cho phép phát trực tiếp mà không cần phần mềm bổ trợ bên thứ ba.
+            </p>
+
+            <table width="100%" border="1" cellpadding="14" cellspacing="0" bgcolor="#f8fafc">
+              <tr>
+                <td width="58%" align="center" valign="middle">
+                  <figure>
+                    <img src="logo_html5.svg" alt="Minh họa cấu trúc HTML5 học phần IN4502N" width="360">
+                    <figcaption><strong>Hình 3.1:</strong> Minh họa biểu trưng đồ họa vector HTML5 (<code>&lt;img src="logo_html5.svg"&gt;</code>) kết hợp chú thích <code>&lt;figcaption&gt;</code>.</figcaption>
+                  </figure>
+                </td>
+                <td width="42%" align="center" valign="middle">
+                  <img src="logo_php.png" alt="Logo PHP minh họa kết nối Front-end và Back-end" width="90"><br><br>
+                  <strong>Minh họa phát âm thanh gốc HTML5:</strong><br>
+                  <small>Thẻ <code>&lt;audio controls&gt;</code> nạp tệp <code>podcast.mp3</code></small><br><br>
+                  <audio controls>
+                    <source src="podcast.mp3" type="audio/mpeg">
+                    Trình duyệt không hỗ trợ thẻ audio HTML5.
+                  </audio>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div id="muc-3-4">
+            <h3>3.4. Nhóm thẻ bảng biểu dữ liệu (Tables)</h3>
+            <p align="justify">
+              Bảng biểu trong HTML được tổ chức rõ ràng theo các vùng ngữ nghĩa gồm <code>&lt;caption&gt;</code> (tiêu đề bảng), <code>&lt;thead&gt;</code> (dòng tiêu đề cột dùng <code>&lt;th&gt;</code>), <code>&lt;tbody&gt;</code> (dữ liệu thân bảng dùng <code>&lt;td&gt;</code>) và <code>&lt;tfoot&gt;</code> (dòng tổng kết). Hai thuộc tính <code>colspan</code> (gộp cột ngang) và <code>rowspan</code> (gộp hàng dọc) cho phép biểu diễn các bảng thống kê phân nhóm nhiều tầng. Bảng 3.1 minh họa việc sử dụng thuộc tính <code>rowspan</code> để tổng hợp các nhóm thẻ HTML thông dụng.
+            </p>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0">
+              <caption><strong>Bảng 3.1: Tổng hợp các nhóm thẻ HTML thông dụng phân theo chức năng (có gộp hàng bằng <code>rowspan</code>)</strong></caption>
+              <thead>
+                <tr bgcolor="#e2e8f0">
+                  <th width="20%" align="center">Nhóm chức năng</th>
+                  <th width="22%" align="center">Thẻ tiêu biểu</th>
+                  <th width="23%" align="center">Thuộc tính quan trọng</th>
+                  <th width="35%" align="left">Mục đích sử dụng trong ứng dụng Web</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td rowspan="2" align="center"><strong>Văn bản &amp;<br>Tiêu đề</strong></td>
+                  <td align="center"><code>&lt;h1&gt;</code> &ndash; <code>&lt;h6&gt;</code>, <code>&lt;p&gt;</code></td>
+                  <td align="center"><code>id</code>, <code>align</code></td>
+                  <td>Phân cấp cấu trúc đề mục và trình bày các đoạn văn bản nội dung.</td>
+                </tr>
+                <tr>
+                  <td align="center"><code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;code&gt;</code></td>
+                  <td align="center"><code>title</code>, <code>cite</code></td>
+                  <td>Nhấn mạnh ngữ nghĩa từ khóa, đánh dấu thuật ngữ và hiển thị mã nguồn.</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" align="center"><strong>Danh sách &amp;<br>Liên kết</strong></td>
+                  <td align="center"><code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;dl&gt;</code></td>
+                  <td align="center"><code>type</code>, <code>start</code></td>
+                  <td>Liệt kê quy trình, danh mục điều hướng hoặc bảng chú giải thuật ngữ.</td>
+                </tr>
+                <tr>
+                  <td align="center"><code>&lt;a&gt;</code></td>
+                  <td align="center"><code>href</code>, <code>target</code></td>
+                  <td>Tạo siêu liên kết điều hướng giữa các trang PHP hoặc nhảy tới neo nội bộ.</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" align="center"><strong>Đa phương tiện</strong></td>
+                  <td align="center"><code>&lt;img&gt;</code>, <code>&lt;figure&gt;</code></td>
+                  <td align="center"><code>src</code>, <code>alt</code>, <code>width</code></td>
+                  <td>Nhúng hình ảnh minh họa kèm văn bản thay thế <code>alt</code> đảm bảo khả năng tiếp cận.</td>
+                </tr>
+                <tr>
+                  <td align="center"><code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code></td>
+                  <td align="center"><code>controls</code>, <code>src</code>, <code>type</code></td>
+                  <td>Nhúng trình phát âm thanh và video trực tiếp trên trình duyệt người dùng.</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" align="center"><strong>Bảng biểu &amp;<br>Biểu mẫu</strong></td>
+                  <td align="center"><code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code></td>
+                  <td align="center"><code>colspan</code>, <code>rowspan</code>, <code>border</code></td>
+                  <td>Hiển thị danh sách bản ghi từ cơ sở dữ liệu MySQL dưới dạng ma trận hàng/cột.</td>
+                </tr>
+                <tr>
+                  <td align="center"><code>&lt;form&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;select&gt;</code></td>
+                  <td align="center"><code>action</code>, <code>method</code>, <code>name</code></td>
+                  <td>Thu thập dữ liệu người dùng và truyền sang kịch bản PHP qua HTTP GET/POST.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr bgcolor="#f8fafc">
+                  <td colspan="4" align="center"><em>Ghi chú: Dòng <code>&lt;tfoot&gt;</code> dùng thuộc tính <code>colspan="4"</code> để gộp toàn bộ chiều ngang bảng.</em></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div id="muc-3-5">
+            <h3>3.5. Nhóm thẻ biểu mẫu (Form) và cơ chế giao tiếp với PHP</h3>
+            <p align="justify">
+              Biểu mẫu (<code>&lt;form&gt;</code>) là cầu nối dữ liệu trực tiếp giữa giao diện HTML và mã xử lý PHP ở máy chủ. Khi người dùng nhấn nút gửi (<code>type="submit"</code>), trình duyệt đóng gói giá trị của từng trường nhập liệu dựa trên thuộc tính <strong><code>name</code></strong> (không phải <code>id</code>) và gửi tới tệp đích chỉ định trong thuộc tính <code>action</code> thông qua phương thức HTTP <code>GET</code> (đính kèm trên URL, ánh xạ vào mảng siêu toàn cục <code>$_GET</code>) hoặc <code>POST</code> (đặt trong phần thân gói tin HTTP, ánh xạ vào <code>$_POST</code>).
+            </p>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0">
+              <caption><strong>Bảng 3.2: Các thuộc tính Form và kiểu điều khiển <code>&lt;input&gt;</code> thiết yếu khi kết nối PHP</strong></caption>
+              <thead>
+                <tr bgcolor="#e2e8f0">
+                  <th width="25%" align="left">Thành phần / Thuộc tính</th>
+                  <th width="25%" align="center">Giá trị / Kiểu tiêu biểu</th>
+                  <th width="50%" align="left">Cơ chế hoạt động và ánh xạ PHP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>action</code></td>
+                  <td align="center"><code>"xu_ly.php"</code></td>
+                  <td>Xác định đường dẫn tệp PHP tiếp nhận và xử lý dữ liệu khi biểu mẫu được gửi đi.</td>
+                </tr>
+                <tr>
+                  <td><code>method="get"</code></td>
+                  <td align="center">HTTP GET</td>
+                  <td>Truyền tham số công khai trên thanh địa chỉ (URL); phù hợp cho tìm kiếm, phân trang; PHP đọc bằng <code>$_GET['ten']</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>method="post"</code></td>
+                  <td align="center">HTTP POST</td>
+                  <td>Đóng gói dữ liệu ẩn trong thân yêu cầu HTTP; phù hợp cho đăng nhập, thêm/sửa dữ liệu, tải tệp; PHP đọc bằng <code>$_POST['ten']</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>name="..."</code></td>
+                  <td align="center">Bắt buộc có trên mỗi trường</td>
+                  <td>Làm khóa (<em>key</em>) trong mảng kết hợp của PHP; trường thiếu thuộc tính <code>name</code> sẽ không được gửi lên máy chủ.</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;input type="text|password|email|number|file"&gt;</code></td>
+                  <td align="center">Ô nhập liệu chuyên biệt</td>
+                  <td>Kiểm tra định dạng cơ bản ngay trên trình duyệt (<em>Client-side validation</em> với <code>required</code>) trước khi gửi tới PHP.</td>
+                </tr>
+                <tr>
+                  <td><code>&lt;select&gt;</code>, <code>&lt;textarea&gt;</code></td>
+                  <td align="center">Danh sách thả xuống &amp; văn bản dài</td>
+                  <td>Thu thập lựa chọn theo danh mục (<code>&lt;option value="..."&gt;</code>) hoặc nội dung bài viết nhiều dòng.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <br>
+
+            <!-- Biểu mẫu minh họa tương tác trực tiếp bằng HTML thuần -->
+            <form action="#" method="post">
+              <fieldset>
+                <legend><strong>Minh họa trực tiếp: Biểu mẫu đăng ký đề tài thực hành học phần IN4502N (HTML thuần)</strong></legend>
+                <table width="100%" border="0" cellpadding="6" cellspacing="0">
+                  <tr>
+                    <td width="28%"><label for="ho-ten"><strong>Họ và tên sinh viên:</strong></label></td>
+                    <td width="72%"><input type="text" id="ho-ten" name="ho_ten" size="40" placeholder="Ví dụ: Nguyễn Văn An" required></td>
+                  </tr>
+                  <tr>
+                    <td><label for="email-sv"><strong>Email học phần:</strong></label></td>
+                    <td><input type="email" id="email-sv" name="email_sv" size="40" placeholder="sinhvien@student.dthu.edu.vn" required></td>
+                  </tr>
+                  <tr>
+                    <td><label for="nhom-th"><strong>Nhóm học phần:</strong></label></td>
+                    <td>
+                      <select id="nhom-th" name="nhom_th">
+                        <option value="N01">Nhóm 01 &ndash; Thứ Hai</option>
+                        <option value="N02">Nhóm 02 &ndash; Thứ Tư</option>
+                        <option value="N03">Nhóm 03 &ndash; Thứ Sáu</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hình thức nộp bài:</strong></td>
+                    <td>
+                      <input type="radio" id="ht-online" name="hinh_thuc" value="online" checked>
+                      <label for="ht-online">Nộp qua hệ thống Web</label>
+                      &nbsp;&nbsp;
+                      <input type="radio" id="ht-truc-tiep" name="hinh_thuc" value="truc_tiep">
+                      <label for="ht-truc-tiep">Báo cáo trực tiếp tại phòng máy</label>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td valign="top"><label for="ghi-chu"><strong>Mô tả tóm tắt đề tài:</strong></label></td>
+                    <td><textarea id="ghi-chu" name="ghi_chu" rows="3" cols="42" placeholder="Nhập tên đề tài hoặc ghi chú gửi tới kịch bản xu_ly.php..."></textarea></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <button type="submit">Gửi biểu mẫu thử nghiệm</button>
+                      <button type="reset">Nhập lại</button>
+                    </td>
+                  </tr>
+                </table>
+              </fieldset>
+            </form>
+
+            <br>
+
+            <details>
+              <summary><strong>Xem mã nguồn PHP minh họa cách tiếp nhận dữ liệu từ biểu mẫu trên (<code>&lt;details&gt;</code> HTML5 gốc)</strong></summary>
+              <table width="100%" border="1" cellpadding="10" cellspacing="0" bgcolor="#f8fafc">
+                <tr>
+                  <td>
+<pre><code>&lt;?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $hoTen   = htmlspecialchars($_POST['ho_ten'] ?? '');
+    $email   = htmlspecialchars($_POST['email_sv'] ?? '');
+    $nhom    = htmlspecialchars($_POST['nhom_th'] ?? '');
+    echo "Đã tiếp nhận đăng ký của sinh viên: " . $hoTen . " (" . $nhom . ")";
+}
+?&gt;</code></pre>
+                  </td>
+                </tr>
+              </table>
+            </details>
+          </div>
+        </div>
+
+        <br>
+        <hr>
+
+        <!-- MỤC 4 -->
+        <div id="muc-4">
+          <h2>4. PHÂN TÍCH VÀ ĐÁNH GIÁ LỰA CHỌN THẺ TỐI ƯU (ĐÁP ỨNG CHUẨN ĐẦU RA CLO1)</h2>
+          <p align="justify">
+            Theo chuẩn đầu ra <strong>CLO1</strong> của học phần <em>Lập trình Web PHP (IN4502N)</em>, sinh viên không chỉ nắm vững cú pháp mà còn phải biết <em>phân tích các bước thiết kế giao diện bằng HTML</em> và <em>đánh giá ưu nhược điểm của từng loại thẻ để lựa chọn thẻ tối ưu cho từng bài toán cụ thể</em>. Việc lạm dụng một loại thẻ tổng quát cho mọi thành phần sẽ làm suy giảm tính dễ đọc của mã nguồn, hạn chế khả năng tối ưu hóa công cụ tìm kiếm (SEO) và gây khó khăn cho người dùng sử dụng trình đọc màn hình.
+          </p>
+          <p align="justify">
+            Trong thực tế triển khai theo nhóm, phần tử chứa khối chung <code>&lt;div id="..."&gt;</code> thường được ưu tiên khi cần sự đơn giản, dễ thống nhất cấu trúc giữa các thành viên mới làm quen HTML hoặc khi tạo vùng bao phục vụ chia bố cục thuần túy. Ngược lại, các thẻ ngữ nghĩa HTML5 như <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code> và <code>&lt;footer&gt;</code> phát huy ưu thế vượt trội khi mô tả vai trò chức năng rõ ràng của từng vùng trang web. Bảng 4.1 tổng hợp phân tích đánh giá và tiêu chí chọn thẻ tối ưu.
+          </p>
+
+          <table width="100%" border="1" cellpadding="8" cellspacing="0">
+            <caption><strong>Bảng 4.1: Đánh giá ưu nhược điểm và lựa chọn thẻ tối ưu đáp ứng chuẩn đầu ra CLO1</strong></caption>
+            <thead>
+              <tr bgcolor="#e2e8f0">
+                <th width="20%" align="left">Tình huống thiết kế</th>
+                <th width="24%" align="center">Lựa chọn chưa tối ưu</th>
+                <th width="24%" align="center">Thẻ tối ưu đề xuất</th>
+                <th width="32%" align="left">Phân tích lý do &amp; ưu điểm kỹ thuật</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Phân vùng bố cục đầu trang, điều hướng, nội dung chính</strong></td>
+                <td align="center">Dùng <code>&lt;div&gt;</code> lồng nhau dày đặc không có ngữ nghĩa</td>
+                <td align="center"><code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code> (hoặc <code>&lt;div id="..."&gt;</code> khi chuẩn hóa đơn giản)</td>
+                <td>Thẻ ngữ nghĩa giúp công cụ tìm kiếm và trình đọc màn hình định vị vùng chức năng chính xác; <code>&lt;div id="..."&gt;</code> giữ tính đơn giản, dễ hiểu cho người mới học.</td>
+              </tr>
+              <tr>
+                <td><strong>Trình bày dữ liệu dạng ma trận hàng &ndash; cột</strong></td>
+                <td align="center">Dùng nhiều <code>&lt;div&gt;</code> hoặc khoảng trắng trong <code>&lt;pre&gt;</code></td>
+                <td align="center"><code>&lt;table&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code></td>
+                <td>Bảo toàn quan hệ hàng&ndash;cột, hỗ trợ gộp ô (<code>colspan</code>, <code>rowspan</code>) và dễ xuất dữ liệu từ vòng lặp PHP.</td>
+              </tr>
+              <tr>
+                <td><strong>Nhấn mạnh từ khóa quan trọng trong văn bản</strong></td>
+                <td align="center">Dùng thẻ thuần trình bày <code>&lt;b&gt;</code> hoặc <code>&lt;i&gt;</code></td>
+                <td align="center"><code>&lt;strong&gt;</code> và <code>&lt;em&gt;</code></td>
+                <td>Truyền tải đúng mức độ nhấn mạnh ngữ nghĩa thay vì chỉ in đậm hoặc in nghiêng bề mặt hiển thị.</td>
+              </tr>
+              <tr>
+                <td><strong>Tạo nút kích hoạt gửi biểu mẫu lên máy chủ PHP</strong></td>
+                <td align="center">Dùng thẻ <code>&lt;a href="#"&gt;</code> hoặc <code>&lt;div&gt;</code></td>
+                <td align="center"><code>&lt;button type="submit"&gt;</code></td>
+                <td>Hỗ trợ điều hướng bàn phím (Enter/Tab), gửi gói tin HTTP chuẩn và hoạt động không cần JavaScript.</td>
+              </tr>
+              <tr>
+                <td><strong>Thu thập thông tin có cấu trúc (email, số, mật khẩu)</strong></td>
+                <td align="center">Dùng chung <code>&lt;input type="text"&gt;</code> cho mọi ô</td>
+                <td align="center"><code>type="email"</code>, <code>type="number"</code>, <code>type="password"</code></td>
+                <td>Kích hoạt kiểm tra hợp lệ sẵn của HTML5 và hiển thị bàn phím phù hợp trên thiết bị di động.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <br>
+        <hr>
+
+        <!-- MỤC 5 -->
+        <div id="muc-5">
+          <h2>5. KẾT LUẬN VÀ TÀI LIỆU THAM KHẢO</h2>
+
+          <h3>5.1. Kết luận</h3>
+          <p align="justify">
+            Qua việc hệ thống hóa kiến thức Chương 2 và trình bày trực tiếp tài liệu báo cáo này bằng 100% mã HTML thuần, báo cáo đã minh chứng đầy đủ khả năng của HTML5 trong việc tổ chức văn bản khoa học, dựng bố cục bảng hai cột, biểu diễn cấu trúc cây DOM, tích hợp đa phương tiện gốc và xây dựng biểu mẫu tương tác hướng máy chủ PHP. Nắm vững bản chất cấu trúc và cách đánh giá lựa chọn thẻ tối ưu theo chuẩn CLO1 là tiền đề vững chắc để sinh viên bước sang giai đoạn định kiểu giao diện với CSS và lập trình xử lý dữ liệu động trên máy chủ PHP ở các chương tiếp theo.
+          </p>
+
+          <h3>5.2. Tài liệu tham khảo</h3>
+          <ol>
+            <li>Phạm Hữu Khang (2009), <em>Xây dựng ứng dụng web bằng PHP &amp; MySQL</em>, Nhà xuất bản Giáo dục.</li>
+            <li>Nguyễn Đình Thuân, Mai Xuân Hùng (2015), <em>Giáo trình phát triển ứng dụng web</em>, Nhà xuất bản Đại học Quốc gia TP. Hồ Chí Minh.</li>
+            <li>Jeremy Osborn (2019), <em>HTML5 và CSS3: Thiết kế trang web thích ứng giàu tính năng: HTML5 digital classroom</em>, Nhà xuất bản Bách khoa Hà Nội.</li>
+          </ol>
+        </div>
+
+        <br>
+        <hr>
+
+        <!-- Phần chân báo cáo -->
+        <table width="100%" border="0" cellpadding="4" cellspacing="0">
+          <tr>
+            <td width="70%" align="left">
+              <small>Tài liệu chuyên đề học phần <strong>IN4502N &ndash; Lập Trình Web PHP</strong> &bull; Bộ môn Khoa học Máy tính, Khoa CNTT, Trường Đại học Đồng Tháp.</small>
+            </td>
+            <td width="30%" align="right">
+              <a href="#dau-trang"><strong>Về đầu trang &uarr;</strong></a>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
