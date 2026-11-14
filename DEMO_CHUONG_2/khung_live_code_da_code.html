@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Các Thẻ HTML Thông Dụng - Chương 2</title>
+</head>
+<body>
+
+    <!-- ================= 1. THẺ TIÊU ĐỀ & ĐỊNH DẠNG VĂN BẢN ================= -->
+    <section>
+        <!-- 1. Cấp độ tiêu đề h1 -> h6 -->
+        <h1>Tiêu đề H1 (Lớn nhất)</h1>
+        <h2>Tiêu đề H2 (Nhỏ hơn)</h2>
+        <h3>Tiêu đề H3 (Nhỏ vừa)</h3>
+
+        <!-- 2. Đường kẻ phân cách -->
+        <hr>
+
+        <!-- 3. Đoạn văn và định dạng chữ -->
+        <p>
+            Đây là chữ <strong>in đậm</strong>,
+            chữ <em>in nghiêng</em>, và chữ <u>gạch chân</u>.
+            <br>
+            Dòng này đã được ngắt xuống hàng bằng thẻ br.
+        </p>
+    </section>
+
+    <hr>
+
+    <!-- ================= 2. NHÓM THẺ DANH SÁCH (LISTS) ================= -->
+    <section>
+        <!-- 1. Danh sách không thứ tự (ul) -->
+        <h4>Kỹ Năng Cần Học:</h4>
+        <ul>
+            <li>HTML5 Markup</li>
+            <li>CSS3 Styling</li>
+            <li>Lập trình Web PHP</li>
+        </ul>
+
+        <!-- 2. Danh sách có thứ tự (ol) -->
+        <h4>Các Bước Thực Hiện:</h4>
+        <ol>
+            <li>Dựng khung HTML</li>
+            <li>Trang trí bằng CSS</li>
+            <li>Xử lý backend PHP & MySQL</li>
+        </ol>
+    </section>
+
+    <hr>
+
+    <!-- ================= 3. THẺ LIÊN KẾT & ĐA PHƯƠNG TIỆN ================= -->
+    <section>
+        <!-- 1. Thẻ siêu liên kết (Link) -->
+        <a href="https://dthu.edu.vn" target="_blank">
+            Cổng thông tin ĐH Đồng Tháp →
+        </a>
+
+        <!-- 2. Thẻ hình ảnh (tự đóng) -->
+        <img src="logo_php.png"
+             alt="Logo PHP"
+             width="100">
+
+        <!-- 3. Thẻ phát âm thanh -->
+        <audio controls>
+            <source src="podcast.mp3" type="audio/mpeg">
+        </audio>
+    </section>
+
+    <hr>
+
+    <!-- ================= 4. NHÓM THẺ BẢNG BIỂU (TABLES) ================= -->
+    <section>
+        <!-- Bảng thời khóa biểu (rowspan & colspan) -->
+        <table border="1">
+            <tr>
+                <th>Thứ</th>
+                <th>Môn học</th>
+                <th>Phòng</th>
+            </tr>
+            <tr>
+                <!-- rowspan: Gộp 2 hàng dọc -->
+                <td rowspan="2">Thứ Hai</td>
+                <td>Lập trình Web PHP</td>
+                <td>Lab 03</td>
+            </tr>
+            <tr>
+                <td>Cơ sở dữ liệu MySQL</td>
+                <td>Lab 01</td>
+            </tr>
+            <tr>
+                <!-- colspan: Gộp 3 cột ngang -->
+                <td colspan="3" align="center">Ghi chú: Lớp học cả ngày</td>
+            </tr>
+        </table>
+    </section>
+
+    <hr>
+
+    <!-- ================= 5. NHÓM THẺ BIỂU MẪU (FORMS) ================= -->
+    <section>
+        <!-- form gửi dữ liệu sang file xuly.php qua POST -->
+        <form action="xuly.php" method="POST">
+
+            <label>Email đăng nhập:</label>
+            <input type="email" name="user_email"
+                   placeholder="name@dthu.edu.vn" required>
+
+            <label>Mật khẩu:</label>
+            <input type="password" name="user_pass" required>
+
+            <label>Vai trò:</label>
+            <select name="role">
+                <option value="sv">Sinh viên</option>
+                <option value="gv">Giảng viên</option>
+            </select>
+
+            <button type="submit">Đăng Nhập</button>
+        </form>
+    </section>
+
+</body>
+</html>
