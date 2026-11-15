@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Nhóm Thẻ Văn Bản & Tiêu Đề</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide-frame {
+            width: 1080px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 30px 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        /* HEADER */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 14px;
+        }
+
+        .slide-title {
+            color: #0f172a;
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .tag-badge {
+            font-family: 'Fira Code', monospace;
+            background: #e0f2fe;
+            color: #0284c7;
+            border: 1px solid #bae6fd;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* 2 CỘT SPLIT VIEW */
+        .split-view {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+        }
+
+        .window-box {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .window-bar {
+            background: #f8fafc;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: #ff5f56;
+        }
+
+        .dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .dot.green {
+            background: #27c93f;
+        }
+
+        .file-tab {
+            color: #64748b;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* CODE EDITOR CÓ SỐ DÒNG (FIRA CODE) */
+        .editor-container {
+            display: flex;
+            background: #f8fafc;
+            padding: 14px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 12.5px;
+            line-height: 1.7;
+        }
+
+        .line-numbers {
+            color: #94a3b8;
+            text-align: right;
+            padding: 0 12px 0 14px;
+            user-select: none;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .code-pre {
+            padding: 0 16px;
+            color: #1e293b;
+            white-space: pre;
+            margin: 0;
+            font-family: inherit;
+        }
+
+        /* Cú pháp VS Code Light */
+        .c-tag {
+            color: #0550ae;
+            font-weight: 600;
+        }
+
+        /* Thẻ: xanh dương */
+        .c-comment {
+            color: #6e7781;
+            font-style: italic;
+        }
+
+        /* Chú thích: xám xanh */
+        .c-strong {
+            color: #953800;
+            font-weight: 600;
+        }
+
+        /* CỘT PHẢI: BROWSER PREVIEW */
+        .browser-preview {
+            background: #ffffff;
+            color: #1f2937;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+
+        .browser-bar {
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: #475569;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Render kết quả */
+        .preview-content h1 {
+            font-size: 22px;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+
+        .preview-content h2 {
+            font-size: 18px;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+
+        .preview-content h3 {
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        .preview-content p {
+            font-size: 13.5px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .preview-content hr {
+            margin: 12px 0;
+            border: none;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        /* GHI CHÚ DƯỚI */
+        .notes-footer {
+            margin-top: 18px;
+            padding: 10px 14px;
+            background: #f0f9ff;
+            border-left: 3px solid #0284c7;
+            border-radius: 6px;
+            color: #0369a1;
+            font-size: 12.5px;
+            font-family: 'Fira Code', monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slide-frame">
+        <div class="slide-header">
+            <span class="slide-title"> Thẻ Tiêu Đề & Định Dạng Văn Bản</span>
+            <span class="tag-badge">Text & Headings</span>
+        </div>
+
+        <div class="split-view">
+            <!-- CỘT TRÁI: CODE VS CODE LIGHT -->
+            <div class="window-box">
+                <div class="window-bar">
+                    <div class="dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <span class="file-tab">text_formatting.html</span>
+                </div>
+                <div class="editor-container">
+                    <div class="line-numbers">
+                        1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14
+                    </div>
+                    <pre class="code-pre"><span class="c-comment">&lt;!-- 1. Cấp độ tiêu đề h1 -> h6 --&gt;</span>
+<span class="c-tag">&lt;h1&gt;</span>Tiêu đề H1 (Lớn nhất)<span class="c-tag">&lt;/h1&gt;</span>
+<span class="c-tag">&lt;h2&gt;</span>Tiêu đề H2 (Nhỏ hơn)<span class="c-tag">&lt;/h2&gt;</span>
+<span class="c-tag">&lt;h3&gt;</span>Tiêu đề H3 (Nhỏ vừa)<span class="c-tag">&lt;/h3&gt;</span>
+
+<span class="c-comment">&lt;!-- 2. Đường kẻ phân cách --&gt;</span>
+<span class="c-tag">&lt;hr&gt;</span>
+
+<span class="c-comment">&lt;!-- 3. Đoạn văn và định dạng chữ --&gt;</span>
+<span class="c-tag">&lt;p&gt;</span>
+  Đây là chữ <span class="c-tag">&lt;strong&gt;</span>in đậm<span class="c-tag">&lt;/strong&gt;</span>,
+  chữ <span class="c-tag">&lt;em&gt;</span>in nghiêng<span class="c-tag">&lt;/em&gt;</span>, và chữ <span class="c-tag">&lt;u&gt;</span>gạch chân<span class="c-tag">&lt;/u&gt;</span>.
+  <span class="c-tag">&lt;br&gt;</span>
+  Dòng này đã được ngắt xuống hàng bằng thẻ br.
+<span class="c-tag">&lt;/p&gt;</span></pre>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: KẾT QUẢ TRÌNH DUYỆT -->
+            <div class="window-box">
+                <div class="window-bar">
+                    <div class="dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <span class="file-tab">Browser Preview</span>
+                </div>
+                <div class="browser-preview">
+                    <div class="browser-bar">
+                        <span>🔒 localhost:3000/text_formatting.html</span>
+                    </div>
+                    <div class="preview-content">
+                        <h1>Tiêu đề H1 (Lớn nhất)</h1>
+                        <h2>Tiêu đề H2 (Nhỏ hơn)</h2>
+                        <h3>Tiêu đề H3 (Nhỏ vừa)</h3>
+                        <hr>
+                        <p>
+                            Đây là chữ <strong>in đậm</strong>,
+                            chữ <em>in nghiêng</em>, và chữ <u>gạch chân</u>.
+                            <br>
+                            Dòng này đã được ngắt xuống hàng bằng thẻ br.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notes-footer">
+            // Ghi chú: &lt;h1&gt; có độ ưu tiên cao nhất trong SEO; &lt;strong&gt; vừa in đậm vừa mang ý nghĩa nhấn
+            mạnh; &lt;br&gt; và &lt;hr&gt; là thẻ tự đóng.
+        </div>
+    </div>
+
+</body>
+
+</html>

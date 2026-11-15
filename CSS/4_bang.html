@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2.4.4. Nhóm Thẻ Bảng Biểu (Tables)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .slide-frame {
+            width: 1080px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 30px 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 14px;
+        }
+
+        .slide-title {
+            color: #0f172a;
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .tag-badge {
+            font-family: 'Fira Code', monospace;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .split-view {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+        }
+
+        .window-box {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .window-bar {
+            background: #f8fafc;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: #ff5f56;
+        }
+
+        .dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .dot.green {
+            background: #27c93f;
+        }
+
+        .file-tab {
+            color: #64748b;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .editor-container {
+            display: flex;
+            background: #f8fafc;
+            padding: 14px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .line-numbers {
+            color: #94a3b8;
+            text-align: right;
+            padding: 0 12px 0 14px;
+            user-select: none;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .code-pre {
+            padding: 0 16px;
+            color: #1e293b;
+            white-space: pre;
+            margin: 0;
+            font-family: inherit;
+        }
+
+        .c-tag {
+            color: #0550ae;
+            font-weight: 600;
+        }
+
+        .c-attr {
+            color: #953800;
+            font-weight: 500;
+        }
+
+        .c-val {
+            color: #0a3069;
+        }
+
+        .c-comment {
+            color: #6e7781;
+            font-style: italic;
+        }
+
+        .browser-preview {
+            background: #ffffff;
+            color: #1f2937;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+
+        .browser-bar {
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            color: #475569;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            border: 1px solid #94a3b8;
+            padding: 7px 10px;
+            text-align: left;
+        }
+
+        .preview-table th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .highlight-cell {
+            background: #f0fdf4;
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .notes-footer {
+            margin-top: 18px;
+            padding: 10px 14px;
+            background: #ecfdf5;
+            border-left: 3px solid #10b981;
+            border-radius: 6px;
+            color: #065f46;
+            font-size: 12.5px;
+            font-family: 'Fira Code', monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slide-frame">
+        <div class="slide-header">
+            <span class="slide-title">Nhóm Thẻ Bảng Biểu (Tables)</span>
+            <span class="tag-badge">Table: tr, th, td, colspan, rowspan</span>
+        </div>
+
+        <div class="split-view">
+            <!-- CỘT TRÁI: CODE VS CODE LIGHT -->
+            <div class="window-box">
+                <div class="window-bar">
+                    <div class="dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <span class="file-tab">table_demo.html</span>
+                </div>
+                <div class="editor-container">
+                    <div class="line-numbers">
+                        1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16
+                    </div>
+                    <pre class="code-pre"><span class="c-tag">&lt;table</span> <span class="c-attr">border</span>=<span class="c-val">"1"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;tr&gt;</span>
+    <span class="c-tag">&lt;th&gt;</span>Thứ<span class="c-tag">&lt;/th&gt;</span>
+    <span class="c-tag">&lt;th&gt;</span>Môn học<span class="c-tag">&lt;/th&gt;</span>
+    <span class="c-tag">&lt;th&gt;</span>Phòng<span class="c-tag">&lt;/th&gt;</span>
+  <span class="c-tag">&lt;/tr&gt;</span>
+  <span class="c-tag">&lt;tr&gt;</span>
+    <span class="c-comment">&lt;!-- rowspan: Gộp 2 hàng dọc --&gt;</span>
+    <span class="c-tag">&lt;td</span> <span class="c-attr">rowspan</span>=<span class="c-val">"2"</span><span class="c-tag">&gt;</span>Thứ Hai<span class="c-tag">&lt;/td&gt;</span>
+    <span class="c-tag">&lt;td&gt;</span>Lập trình Web PHP<span class="c-tag">&lt;/td&gt;</span>
+    <span class="c-tag">&lt;td&gt;</span>Lab 03<span class="c-tag">&lt;/td&gt;</span>
+  <span class="c-tag">&lt;/tr&gt;</span>
+  <span class="c-tag">&lt;tr&gt;</span>
+    <span class="c-tag">&lt;td&gt;</span>Cơ sở dữ liệu MySQL<span class="c-tag">&lt;/td&gt;</span>
+    <span class="c-tag">&lt;td&gt;</span>Lab 01<span class="c-tag">&lt;/td&gt;</span>
+  <span class="c-tag">&lt;/tr&gt;</span>
+  <span class="c-tag">&lt;tr&gt;</span>
+    <span class="c-comment">&lt;!-- colspan: Gộp 3 cột ngang --&gt;</span>
+    <span class="c-tag">&lt;td</span> <span class="c-attr">colspan</span>=<span class="c-val">"3"</span> <span class="c-attr">align</span>=<span class="c-val">"center"</span><span class="c-tag">&gt;</span>Ghi chú: Lớp học cả ngày<span class="c-tag">&lt;/td&gt;</span>
+  <span class="c-tag">&lt;/tr&gt;</span>
+<span class="c-tag">&lt;/table&gt;</span></pre>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: KẾT QUẢ TRÌNH DUYỆT -->
+            <div class="window-box">
+                <div class="window-bar">
+                    <div class="dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <span class="file-tab">Browser Preview</span>
+                </div>
+                <div class="browser-preview">
+                    <div class="browser-bar">
+                        <span>🔒 localhost:3000/table_demo.html</span>
+                    </div>
+                    <div class="preview-content">
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>Thứ</th>
+                                    <th>Môn học</th>
+                                    <th>Phòng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td rowspan="2" class="highlight-cell"
+                                        style="text-align: center; vertical-align: middle;">Thứ Hai<br><small
+                                            style="color:#047857; font-size:11px;">(rowspan="2")</small></td>
+                                    <td>Lập trình Web PHP</td>
+                                    <td>Lab 03</td>
+                                </tr>
+                                <tr>
+                                    <td>Cơ sở dữ liệu MySQL</td>
+                                    <td>Lab 01</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="highlight-cell" style="text-align: center;">
+                                        <em>Ghi chú: Lớp học cả ngày (colspan="3")</em>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notes-footer">
+            // Ghi chú: &lt;tr&gt; là dòng; &lt;th&gt; là tiêu đề cột in đậm; &lt;td&gt; là ô dữ liệu; colspan gộp cột
+            ngang; rowspan gộp hàng dọc.
+        </div>
+    </div>
+
+</body>
+
+</html>
